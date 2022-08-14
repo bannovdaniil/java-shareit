@@ -1,7 +1,11 @@
 package ru.practicum.shareit.user.model;
 
-/**
- * // TODO .
- */
+import lombok.Data;
+
+@Data
 public class User {
+    private Long userId;
+    private String name;
+    private String email;
+
 }
