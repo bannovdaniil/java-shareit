@@ -1,5 +1,6 @@
 # Разработка контроллеров
 - UserController
+- ItemController
 
 # Создание DTO-объектов и мапперов
 - User модель
