@@ -25,23 +25,23 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto createUsers(@Valid @RequestBody UserDto userDto) throws UserEmailExistException {
+    public UserDto createUser(@Valid @RequestBody UserDto userDto) throws UserEmailExistException {
         return userService.createUser(userDto);
     }
 
     @GetMapping("{userId}")
-    public UserDto findUsersById(@NotNull @PathVariable Long userId) throws UserNotFoundException {
+    public UserDto findUserById(@NotNull @PathVariable Long userId) throws UserNotFoundException {
         return userService.findUserById(userId);
     }
 
     @PatchMapping("{userId}")
-    public UserDto updateUsers(@NotNull @PathVariable Long userId,
+    public UserDto updateUser(@NotNull @PathVariable Long userId,
                                @Valid @RequestBody UserDto userDto) throws UserNotFoundException, UserEmailExistException {
         return userService.updateUser(userId, userDto);
     }
 
     @DeleteMapping("{userId}")
-    public void deleteUsers(@NotNull @PathVariable Long userId) throws UserNotFoundException {
+    public void deleteUser(@NotNull @PathVariable Long userId) throws UserNotFoundException {
         userService.deleteUserById(userId);
     }
 }
