@@ -2,7 +2,8 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.user.dao.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exception.UserEmailExistException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
@@ -10,8 +11,8 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,15 +22,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> findAll() {
-        return userListToDto(userRepository.findAll());
-    }
-
-    private List<UserDto> userListToDto(List<User> userList) {
-        List<UserDto> userDtoList = new ArrayList<>();
-        for (User user : userList) {
-            userDtoList.add(userMapper.userToDto(user));
-        }
-        return userDtoList;
+        return userMapper.userListToDto(userRepository.findAll());
     }
 
     @Override
@@ -37,30 +30,52 @@ public class UserServiceImpl implements UserService {
         if (userDto.getEmail() == null) {
             throw new InvalidParameterException("User Email is empty.");
         }
-        if (userRepository.isUserByEmailExist(userDto.getEmail())) {
-            throw new UserEmailExistException("User with this Email exists.");
-        }
-        User user = userRepository.createUser(userMapper.dtoToUser(userDto));
+        checkUserByEmailExist(userDto.getEmail());
+        User user = userRepository.save(userMapper.dtoToUser(userDto));
         return userMapper.userToDto(user);
     }
 
     @Override
     public UserDto findUserById(Long userId) throws UserNotFoundException {
-        return userMapper.userToDto(userRepository.findUserById(userId));
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException("User ID not found.");
+        }
+        return userMapper.userToDto(user.get());
     }
 
     @Override
+    @Transactional
     public UserDto updateUser(Long userId, UserDto userDto) throws UserNotFoundException, UserEmailExistException {
-        if (userRepository.isUserByEmailExist(userDto.getEmail())) {
+        checkUserExist(userId);
+        User updateUser = userRepository.findUserById(userId).get();
+        if (userDto.getEmail() != null) {
+            checkUserByEmailExist(userDto.getEmail());
+            updateUser.setEmail(userDto.getEmail());
+        }
+        if (userDto.getName() != null) {
+            updateUser.setName(userDto.getName());
+        }
+        User user = userRepository.save(updateUser);
+        return userMapper.userToDto(user);
+    }
+
+    private void checkUserByEmailExist(String email) throws UserEmailExistException {
+        if (userRepository.findUserByEmail(email).isPresent()) {
             throw new UserEmailExistException("User with this Email exists.");
         }
-        userDto.setId(userId);
-        User user = userRepository.updateUser(userMapper.dtoToUser(userDto));
-        return userMapper.userToDto(user);
     }
 
     @Override
     public void deleteUserById(Long userId) throws UserNotFoundException {
-        userRepository.deleteUserById(userId);
+        checkUserExist(userId);
+        userRepository.deleteById(userId);
+    }
+
+    private void checkUserExist(Long userId) throws UserNotFoundException {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException("User ID not found.");
+        }
     }
 }
