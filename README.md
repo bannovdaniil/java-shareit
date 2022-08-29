@@ -8,6 +8,7 @@
 # History:
 ### 2022-08-29
 - JpaRepository для Users
+- JpaRepository для Items
 
 ### 2022-08-28
 ## Настройка JPA

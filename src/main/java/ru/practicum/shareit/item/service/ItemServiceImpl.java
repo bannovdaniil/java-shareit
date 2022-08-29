@@ -2,11 +2,12 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.item.dao.ItemRepository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.service.UserService;
@@ -15,6 +16,7 @@ import java.nio.file.AccessDeniedException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +35,7 @@ public class ItemServiceImpl implements ItemService {
         UserDto userDto = userService.findUserById(userId);
         Item item = itemMapper.dtoToItem(itemDto);
         item.setOwner(userDto.getId());
-        item = itemRepository.createItem(item);
+        item = itemRepository.save(item);
         return itemMapper.itemToDto(item);
     }
 
@@ -44,6 +46,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto)
             throws
             UserNotFoundException,
@@ -55,23 +58,45 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getDescription() != null) {
             checkBlankParameter(itemDto.getDescription());
         }
-        UserDto userDto = userService.findUserById(userId);
-        itemRepository.checkUserAccessToItem(userDto.getId(), itemId);
-        itemDto.setId(itemId);
-        Item item = itemMapper.dtoToItem(itemDto);
-        item = itemRepository.updateItem(item);
-        return itemMapper.itemToDto(item);
+        userService.checkUserExist(userId);
+        Optional<Item> checkItem = itemRepository.findById(itemId);
+        if (checkItem.isEmpty()) {
+            throw new ItemNotFoundException("Item ID not found.");
+        }
+        if (!checkItem.get().getOwner().equals(userId)) {
+            throw new AccessDeniedException("Other user access denied.");
+        }
+        Item updateItem = updateItemField(itemDto, checkItem);
+        return itemMapper.itemToDto(itemRepository.save(updateItem));
+    }
+
+    private static Item updateItemField(ItemDto itemDto, Optional<Item> checkItem) {
+        Item updateItem = checkItem.get();
+        if (itemDto.getAvailable() != null) {
+            updateItem.setAvailable(itemDto.getAvailable());
+        }
+        if (itemDto.getName() != null) {
+            updateItem.setName(itemDto.getName());
+        }
+        if (itemDto.getDescription() != null) {
+            updateItem.setDescription(itemDto.getDescription());
+        }
+        return updateItem;
     }
 
     @Override
     public ItemDto findItemById(Long itemId) throws ItemNotFoundException {
-        return itemMapper.itemToDto(itemRepository.findUserById(itemId));
+        Optional<Item> item = itemRepository.findById(itemId);
+        if (item.isEmpty()) {
+            throw new ItemNotFoundException("Item ID not found.");
+        }
+        return itemMapper.itemToDto(item.get());
     }
 
     @Override
     public List<ItemDto> findAllByUserId(Long userId) throws UserNotFoundException {
-        UserDto userDto = userService.findUserById(userId);
-        return itemListToDto(itemRepository.findAll(userDto.getId()));
+        userService.checkUserExist(userId);
+        return itemMapper.itemListToDto(itemRepository.findAllByOwner(userId));
     }
 
     @Override
@@ -79,14 +104,8 @@ public class ItemServiceImpl implements ItemService {
         if (queryText.trim().isBlank()) {
             return new ArrayList<>();
         }
-        return itemListToDto(itemRepository.findItemsByQueryText(queryText));
-    }
-
-    private List<ItemDto> itemListToDto(List<Item> itemList) {
-        List<ItemDto> itemDtoList = new ArrayList<>();
-        for (Item item : itemList) {
-            itemDtoList.add(itemMapper.itemToDto(item));
-        }
-        return itemDtoList;
+        return itemMapper.itemListToDto(
+                itemRepository.findItemByAvailableAndQueryContainWithIgnoreCase(queryText)
+        );
     }
 }
