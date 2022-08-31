@@ -127,13 +127,16 @@ public class BookingServiceImpl implements BookingService {
             case ("REJECTED"):
                 bookingList = bookingRepository.findAllByBookerAndStatusRejectedOrderByStartDesc(userId);
                 break;
+            case ("WAITING"):
+                bookingList = bookingRepository.findAllByBookerAndStatusWaitingOrderByStartDesc(userId);
+                break;
             default:
         }
         return bookingListToOutDtoList(bookingList);
     }
 
     private static void checkStateValue(String state) throws BookingErrorException {
-        List<String> stateList = List.of("ALL", "CURRENT", "PAST", "FUTURE", "REJECTED");
+        List<String> stateList = List.of("ALL", "CURRENT", "PAST", "FUTURE", "REJECTED", "WAITING");
         if (!stateList.contains(state)) {
             throw new BookingErrorException("Unknown state: UNSUPPORTED_STATUS");
         }
@@ -149,10 +152,10 @@ public class BookingServiceImpl implements BookingService {
                 bookingList = bookingRepository.findAllByItemOwnerOrderByStartDesc(ownerId);
                 break;
             case ("CURRENT"):
-//                bookingList = bookingRepository.findAllByBookerByDateIntoPeriodOrderByStartDesc(userId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByItemOwnerByDateIntoPeriodOrderByStartDesc(ownerId, LocalDateTime.now());
                 break;
             case ("PAST"):
-//                bookingList = bookingRepository.findAllByBookerAndEndIsBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByItemOwnerAndEndIsBeforeOrderByStartDesc(ownerId, LocalDateTime.now());
                 break;
             case ("FUTURE"):
                 bookingList = bookingRepository.findAllByItemOwnerAndStartIsAfterOrderByStartDesc(ownerId, LocalDateTime.now());
@@ -160,9 +163,18 @@ public class BookingServiceImpl implements BookingService {
             case ("REJECTED"):
                 bookingList = bookingRepository.findAllByItemOwnerAndStateRejectedOrderByStartDesc(ownerId);
                 break;
+            case ("WAITING"):
+                bookingList = bookingRepository.findAllByItemOwnerAndStateWaitingOrderByStartDesc(ownerId);
+                break;
             default:
         }
         return bookingListToOutDtoList(bookingList);
+    }
+
+    @Override
+    public List<BookingOutDto> findAllBookingByOwnerIdAndItemId(Long ownerId, Long itemId)
+            throws UserNotFoundException, ItemNotFoundException {
+        return bookingListToOutDtoList(bookingRepository.findAllByItemOwnerAndItemIdOrderByStartAsc(ownerId, itemId));
     }
 
     private List<BookingOutDto> bookingListToOutDtoList(List<Booking> bookingList)

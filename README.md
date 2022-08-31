@@ -6,6 +6,10 @@
 Проект обмена вещами, возможно далеко похожее на Avito.
 
 # History:
+### 2022-09-01
+## Реализация функции бронирования
+- JpaRepository для Booking
+
 ### 2022-08-29
 - JpaRepository для Users
 - JpaRepository для Items

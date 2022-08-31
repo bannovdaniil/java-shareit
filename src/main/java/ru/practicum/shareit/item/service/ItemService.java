@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.service;
 
+import ru.practicum.shareit.booking.exception.BookingErrorException;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 
@@ -14,7 +16,9 @@ public interface ItemService {
 
     ItemDto findItemById(Long itemId) throws ItemNotFoundException;
 
-    List<ItemDto> findAllByUserId(Long userId) throws UserNotFoundException;
+    List<ItemWithBookingDto> findAllByUserId(Long userId) throws UserNotFoundException, BookingErrorException, ItemNotFoundException;
 
     List<ItemDto> findItemsByQueryText(String queryText);
+
+    ItemWithBookingDto findItemWithBookingById(Long userId, Long itemId) throws ItemNotFoundException, UserNotFoundException, BookingErrorException;
 }

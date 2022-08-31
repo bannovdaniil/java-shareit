@@ -1,11 +1,18 @@
 package ru.practicum.shareit.item.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.dto.BookingItemDto;
+import ru.practicum.shareit.booking.dto.BookingOutDto;
+import ru.practicum.shareit.booking.exception.BookingErrorException;
+import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.mapper.ItemWithBookingMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
@@ -18,11 +25,25 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final UserService userService;
-    private final ItemMapper itemMapper;
     private final ItemRepository itemRepository;
+    private final BookingService bookingService;
+    private final ItemMapper itemMapper;
+    private final ItemWithBookingMapper itemWithBookingMapper;
+
+    @Autowired
+    public ItemServiceImpl(UserService userService,
+                           ItemRepository itemRepository,
+                           @Lazy BookingService bookingService,
+                           ItemMapper itemMapper,
+                           ItemWithBookingMapper itemWithBookingMapper) {
+        this.userService = userService;
+        this.itemRepository = itemRepository;
+        this.bookingService = bookingService;
+        this.itemMapper = itemMapper;
+        this.itemWithBookingMapper = itemWithBookingMapper;
+    }
 
     @Override
     public ItemDto createItem(Long userId, ItemDto itemDto) throws UserNotFoundException {
@@ -84,6 +105,32 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public ItemWithBookingDto findItemWithBookingById(Long userId, Long itemId)
+            throws ItemNotFoundException, UserNotFoundException, BookingErrorException {
+        Optional<Item> item = itemRepository.findById(itemId);
+        if (item.isEmpty()) {
+            throw new ItemNotFoundException("Item ID not found.");
+        }
+        ItemWithBookingDto itemWithBookingDto = itemWithBookingMapper.itemToDto(item.get());
+        if (userId == item.get().getOwner()) {
+            List<BookingOutDto> bookingOutDtoList
+                    = bookingService.findAllBookingByOwnerIdAndItemId(itemWithBookingDto.getOwner(), itemId);
+            if (bookingOutDtoList.size() > 0) {
+                itemWithBookingDto.setLastBooking(getBookingItemDto(bookingOutDtoList.get(0)));
+            }
+            if (bookingOutDtoList.size() > 1) {
+                itemWithBookingDto.setNextBooking(getBookingItemDto(bookingOutDtoList.get(1)));
+            }
+        }
+        return itemWithBookingDto;
+    }
+
+    private static BookingItemDto getBookingItemDto(BookingOutDto bookingOutDto) {
+        return new BookingItemDto(bookingOutDto.getId(), bookingOutDto.getBooker().getId(),
+                bookingOutDto.getStart(), bookingOutDto.getEnd(), bookingOutDto.getStatus());
+    }
+
+    @Override
     public ItemDto findItemById(Long itemId) throws ItemNotFoundException {
         Optional<Item> item = itemRepository.findById(itemId);
         if (item.isEmpty()) {
@@ -93,9 +140,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> findAllByUserId(Long userId) throws UserNotFoundException {
+    public List<ItemWithBookingDto> findAllByUserId(Long userId) throws UserNotFoundException, BookingErrorException, ItemNotFoundException {
         userService.checkUserExist(userId);
-        return itemMapper.itemListToDto(itemRepository.findAllByOwner(userId));
+        List<Item> itemList = itemRepository.findAllByOwner(userId);
+        List<ItemWithBookingDto> itemWithBookingDtoList = new ArrayList<>();
+        for (Item item : itemList) {
+            itemWithBookingDtoList.add(findItemWithBookingById(userId, item.getId()));
+        }
+        return itemWithBookingDtoList;
     }
 
     @Override

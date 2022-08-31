@@ -23,6 +23,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findAllByBookerAndStatusRejectedOrderByStartDesc(Long userId);
 
     @Query("SELECT b FROM Booking as b " +
+            " WHERE b.booker = :userId " +
+            " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.WAITING " +
+            " ORDER BY b.start DESC ")
+    List<Booking> findAllByBookerAndStatusWaitingOrderByStartDesc(Long userId);
+
+    @Query("SELECT b FROM Booking as b " +
             " WHERE b.booker = :userId" +
             " AND b.start <= :dateTime " +
             " AND b.end >= :dateTime ")
@@ -57,4 +63,32 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     )
     List<Booking> findAllByItemOwnerAndStateRejectedOrderByStartDesc(Long ownerId);
 
+    @Query("SELECT b FROM Booking as b " +
+            " JOIN Item as i ON b.itemId = i.id" +
+            " WHERE i.owner = :ownerId " +
+            " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.WAITING " +
+            " ORDER BY b.start DESC "
+    )
+    List<Booking> findAllByItemOwnerAndStateWaitingOrderByStartDesc(Long ownerId);
+
+    @Query("SELECT b FROM Booking as b " +
+            " JOIN Item as i ON b.itemId = i.id" +
+            " WHERE i.owner = :ownerId" +
+            " AND b.start <= :dateTime " +
+            " AND b.end >= :dateTime ")
+    List<Booking> findAllByItemOwnerByDateIntoPeriodOrderByStartDesc(Long ownerId, LocalDateTime dateTime);
+
+    @Query("SELECT b FROM Booking as b " +
+            " JOIN Item as i ON b.itemId = i.id" +
+            " WHERE i.owner = :ownerId" +
+            " AND b.end < :dateTime ")
+    List<Booking> findAllByItemOwnerAndEndIsBeforeOrderByStartDesc(Long ownerId, LocalDateTime dateTime);
+
+    @Query("SELECT b FROM Booking as b " +
+            " JOIN Item as i ON b.itemId = i.id" +
+            " WHERE i.owner = :ownerId " +
+            " AND i.id = :itemId " +
+            " ORDER BY b.start ASC "
+    )
+    List<Booking> findAllByItemOwnerAndItemIdOrderByStartAsc(Long ownerId, Long itemId);
 }
