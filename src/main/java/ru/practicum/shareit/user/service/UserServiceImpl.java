@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
         if (userDto.getEmail() == null) {
             throw new InvalidParameterException("User Email is empty.");
         }
-        checkUserByEmailExist(userDto.getEmail());
+//        checkUserByEmailExist(userDto.getEmail());
         User user = userRepository.save(userMapper.dtoToUser(userDto));
         return userMapper.userToDto(user);
     }
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
         checkUserExist(userId);
         User updateUser = userRepository.findUserById(userId).get();
         if (userDto.getEmail() != null) {
-            checkUserByEmailExist(userDto.getEmail());
+ //           checkUserByEmailExist(userDto.getEmail());
             updateUser.setEmail(userDto.getEmail());
         }
         if (userDto.getName() != null) {

@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -32,9 +31,9 @@ public class ItemServiceImpl implements ItemService {
         }
         checkBlankParameter(itemDto.getName());
         checkBlankParameter(itemDto.getDescription());
-        UserDto userDto = userService.findUserById(userId);
+        userService.checkUserExist(userId);
         Item item = itemMapper.dtoToItem(itemDto);
-        item.setOwner(userDto.getId());
+        item.setOwner(userId);
         item = itemRepository.save(item);
         return itemMapper.itemToDto(item);
     }
