@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
@@ -33,8 +34,8 @@ public class ItemController {
     }
 
     @GetMapping("{itemId}")
-    public ItemDto findItemById(@NotNull @PathVariable Long itemId) throws ItemNotFoundException {
-        return itemService.findItemById(itemId);
+    public ItemWithBookingDto findItemById(@NotNull @PathVariable Long itemId) throws ItemNotFoundException {
+        return itemService.findItemWithBookingById(itemId);
     }
 
     @PatchMapping("{itemId}")

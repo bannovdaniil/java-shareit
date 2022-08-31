@@ -3,9 +3,12 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.mapper.ItemWithBookingMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
@@ -22,6 +25,7 @@ import java.util.Optional;
 public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final ItemMapper itemMapper;
+    private final ItemWithBookingMapper itemWithBookingMapper;
     private final ItemRepository itemRepository;
 
     @Override
@@ -81,6 +85,18 @@ public class ItemServiceImpl implements ItemService {
             updateItem.setDescription(itemDto.getDescription());
         }
         return updateItem;
+    }
+
+    @Override
+    public ItemWithBookingDto findItemWithBookingById(Long itemId) throws ItemNotFoundException {
+        Optional<Item> item = itemRepository.findById(itemId);
+        if (item.isEmpty()) {
+            throw new ItemNotFoundException("Item ID not found.");
+        }
+        ItemWithBookingDto itemWithBookingDto = itemWithBookingMapper.itemToDto(item.get());
+        itemWithBookingDto.setLastBooking(new BookingItemDto());
+        itemWithBookingDto.setNextBooking(new BookingItemDto());
+        return itemWithBookingDto;
     }
 
     @Override
