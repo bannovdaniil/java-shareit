@@ -12,9 +12,7 @@ import java.time.LocalDateTime;
 public class BookingItemDto {
     private Long id;
     private Long bookerId;
-    @JsonIgnore
     private LocalDateTime start;
-    @JsonIgnore
     private LocalDateTime end;
     @JsonIgnore
     private BookingStatus status;
