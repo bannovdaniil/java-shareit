@@ -13,43 +13,43 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id " +
             " WHERE b.id = :bookingId " +
-            " AND ( i.owner = :userId OR b.booker = :userId )")
+            " AND ( i.ownerId = :userId OR b.bookerId = :userId )")
     Optional<Booking> findByIdAndBookerOrOwner(Long bookingId, Long userId);
 
     @Query("SELECT b FROM Booking as b " +
-            " WHERE b.booker = :userId " +
+            " WHERE b.bookerId = :userId " +
             " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.REJECTED " +
             " ORDER BY b.start DESC ")
     List<Booking> findAllByBookerAndStatusRejectedOrderByStartDesc(Long userId);
 
     @Query("SELECT b FROM Booking as b " +
-            " WHERE b.booker = :userId " +
+            " WHERE b.bookerId = :userId " +
             " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.WAITING " +
             " ORDER BY b.start DESC ")
     List<Booking> findAllByBookerAndStatusWaitingOrderByStartDesc(Long userId);
 
     @Query("SELECT b FROM Booking as b " +
-            " WHERE b.booker = :userId" +
+            " WHERE b.bookerId = :userId" +
             " AND b.start <= :dateTime " +
             " AND b.end >= :dateTime ")
     List<Booking> findAllByBookerByDateIntoPeriodOrderByStartDesc(Long userId, LocalDateTime dateTime);
 
-    List<Booking> findAllByBookerAndStartIsAfterOrderByStartDesc(Long userId, LocalDateTime dateTime);
+    List<Booking> findAllByBookerIdAndStartIsAfterOrderByStartDesc(Long userId, LocalDateTime dateTime);
 
-    List<Booking> findAllByBookerAndEndIsBeforeOrderByStartDesc(Long userId, LocalDateTime dateTime);
+    List<Booking> findAllByBookerIdAndEndIsBeforeOrderByStartDesc(Long userId, LocalDateTime dateTime);
 
-    List<Booking> findAllByBookerOrderByStartDesc(Long userId);
+    List<Booking> findAllByBookerIdOrderByStartDesc(Long userId);
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
-            " WHERE i.owner = :ownerId " +
+            " WHERE i.ownerId = :ownerId " +
             " ORDER BY b.start DESC "
     )
     List<Booking> findAllByItemOwnerOrderByStartDesc(Long ownerId);
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
-            " WHERE i.owner = :ownerId " +
+            " WHERE i.ownerId = :ownerId " +
             " AND b.start >= :dateTime " +
             " ORDER BY b.start DESC "
     )
@@ -57,7 +57,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
-            " WHERE i.owner = :ownerId " +
+            " WHERE i.ownerId = :ownerId " +
             " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.REJECTED " +
             " ORDER BY b.start DESC "
     )
@@ -65,7 +65,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
-            " WHERE i.owner = :ownerId " +
+            " WHERE i.ownerId = :ownerId " +
             " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.WAITING " +
             " ORDER BY b.start DESC "
     )
@@ -73,20 +73,20 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
-            " WHERE i.owner = :ownerId" +
+            " WHERE i.ownerId = :ownerId" +
             " AND b.start <= :dateTime " +
             " AND b.end >= :dateTime ")
     List<Booking> findAllByItemOwnerByDateIntoPeriodOrderByStartDesc(Long ownerId, LocalDateTime dateTime);
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
-            " WHERE i.owner = :ownerId" +
+            " WHERE i.ownerId = :ownerId" +
             " AND b.end < :dateTime ")
     List<Booking> findAllByItemOwnerAndEndIsBeforeOrderByStartDesc(Long ownerId, LocalDateTime dateTime);
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
-            " WHERE i.owner = :ownerId " +
+            " WHERE i.ownerId = :ownerId " +
             " AND i.id = :itemId " +
             " ORDER BY b.start ASC "
     )
@@ -95,7 +95,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
             " WHERE i.id = :itemId " +
-            " AND b.booker = :userId " +
+            " AND b.bookerId = :userId " +
             " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.APPROVED " +
             " AND b.end < :dateTime " +
             " ORDER BY b.start DESC "

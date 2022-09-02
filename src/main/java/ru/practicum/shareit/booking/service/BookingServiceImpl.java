@@ -19,7 +19,6 @@ import ru.practicum.shareit.user.service.UserService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,11 +42,10 @@ public class BookingServiceImpl implements BookingService {
         checkCorrectDateTime(bookingInDto);
         Booking booking = bookingMapper.dtoToBooking(bookingInDto);
         booking.setStatus(BookingStatus.WAITING);
-        booking.setBooker(userId);
+        booking.setBookerId(userId);
         booking = bookingRepository.save(booking);
-        BookingOutDto bookingOutDto = getBookingOutDtoWithItemAndUser(booking);
 
-        return bookingOutDto;
+        return getBookingOutDtoWithItemAndUser(booking);
     }
 
     private void checkCorrectDateTime(BookingInDto bookingInDto) throws BookingErrorException {
@@ -66,8 +64,8 @@ public class BookingServiceImpl implements BookingService {
     public BookingOutDto updateBookingApproveStatus(Long userId, Long bookingId, String bookingStatus)
             throws UserNotFoundException, BookingNotFoundException, ItemNotFoundException, BookingErrorException {
         userService.checkUserExist(userId);
-        checkBookingExist(bookingId);
-        Booking booking = bookingRepository.findById(bookingId).get();
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException("Booking ID not found."));
         checkItemOwnerForAccess(userId, booking);
         if (booking.getStatus() != BookingStatus.WAITING) {
             throw new BookingErrorException("Status already set");
@@ -79,9 +77,8 @@ public class BookingServiceImpl implements BookingService {
             booking.setStatus(BookingStatus.REJECTED);
         }
         booking = bookingRepository.save(booking);
-        BookingOutDto bookingOutDto = getBookingOutDtoWithItemAndUser(booking);
 
-        return bookingOutDto;
+        return getBookingOutDtoWithItemAndUser(booking);
     }
 
     private void checkItemOwnerForAccess(Long userId, Booking booking) throws ItemNotFoundException, BookingNotFoundException {
@@ -96,13 +93,10 @@ public class BookingServiceImpl implements BookingService {
             throws UserNotFoundException, BookingNotFoundException, ItemNotFoundException {
         userService.checkUserExist(userId);
         checkBookingExist(bookingId);
-        Optional<Booking> booking = bookingRepository.findByIdAndBookerOrOwner(bookingId, userId);
-        if (booking.isEmpty()) {
-            throw new BookingNotFoundException("Booking for your userId not found.");
-        }
-        BookingOutDto bookingOutDto = getBookingOutDtoWithItemAndUser(booking.get());
+        Booking booking = bookingRepository.findByIdAndBookerOrOwner(bookingId, userId)
+                .orElseThrow(() -> new BookingNotFoundException("Booking for your userId not found."));
 
-        return bookingOutDto;
+        return getBookingOutDtoWithItemAndUser(booking);
     }
 
     @Override
@@ -113,16 +107,16 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookingList = new ArrayList<>();
         switch (state) {
             case ("ALL"):
-                bookingList = bookingRepository.findAllByBookerOrderByStartDesc(userId);
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
                 break;
             case ("CURRENT"):
                 bookingList = bookingRepository.findAllByBookerByDateIntoPeriodOrderByStartDesc(userId, LocalDateTime.now());
                 break;
             case ("PAST"):
-                bookingList = bookingRepository.findAllByBookerAndEndIsBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(userId, LocalDateTime.now());
                 break;
             case ("FUTURE"):
-                bookingList = bookingRepository.findAllByBookerAndStartIsAfterOrderByStartDesc(userId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByBookerIdAndStartIsAfterOrderByStartDesc(userId, LocalDateTime.now());
                 break;
             case ("REJECTED"):
                 bookingList = bookingRepository.findAllByBookerAndStatusRejectedOrderByStartDesc(userId);
@@ -195,14 +189,11 @@ public class BookingServiceImpl implements BookingService {
             throws ItemNotFoundException, UserNotFoundException {
         BookingOutDto bookingOutDto = bookingMapper.bookingToDto(booking);
         bookingOutDto.setItem(itemService.findItemById(booking.getItemId()));
-        bookingOutDto.setBooker(userService.findUserById(booking.getBooker()));
+        bookingOutDto.setBooker(userService.findUserById(booking.getBookerId()));
         return bookingOutDto;
     }
 
     private void checkBookingExist(Long bookingId) throws BookingNotFoundException {
-        Optional<Booking> booking = bookingRepository.findById(bookingId);
-        if (booking.isEmpty()) {
-            throw new BookingNotFoundException("Booking ID not found.");
-        }
+        bookingRepository.findById(bookingId).orElseThrow(() -> new BookingNotFoundException("Booking ID not found."));
     }
 }

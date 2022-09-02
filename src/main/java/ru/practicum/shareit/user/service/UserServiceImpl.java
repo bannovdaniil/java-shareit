@@ -12,7 +12,6 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.security.InvalidParameterException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +25,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto createUser(UserDto userDto) throws UserEmailExistException {
+    public UserDto createUser(UserDto userDto) {
         if (userDto.getEmail() == null) {
             throw new InvalidParameterException("User Email is empty.");
         }
@@ -36,27 +35,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findUserById(Long userId) throws UserNotFoundException {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new UserNotFoundException("User ID not found.");
-        }
-        return userMapper.userToDto(user.get());
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User ID not found."));
+        return userMapper.userToDto(user);
     }
 
     @Override
     public User findFullUserById(Long userId) throws UserNotFoundException {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new UserNotFoundException("User ID not found.");
-        }
-        return user.get();
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User ID not found."));
     }
 
     @Override
     @Transactional
-    public UserDto updateUser(Long userId, UserDto userDto) throws UserNotFoundException, UserEmailExistException {
-        checkUserExist(userId);
-        User updateUser = userRepository.findUserById(userId).get();
+    public UserDto updateUser(Long userId, UserDto userDto) throws UserNotFoundException {
+        User updateUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User ID not found."));
+
         if (userDto.getEmail() != null) {
             updateUser.setEmail(userDto.getEmail());
         }
@@ -80,9 +72,6 @@ public class UserServiceImpl implements UserService {
     }
 
     public void checkUserExist(Long userId) throws UserNotFoundException {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new UserNotFoundException("User ID not found.");
-        }
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User ID not found."));
     }
 }

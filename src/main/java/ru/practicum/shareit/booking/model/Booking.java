@@ -1,13 +1,15 @@
 package ru.practicum.shareit.booking.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "bookings")
-@Data
+@Getter
+@Setter
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +21,7 @@ public class Booking {
     @Column(name = "item_id")
     private Long itemId;
     @Column(name = "booker_id")
-    private Long booker;
+    private Long bookerId;
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private BookingStatus status;

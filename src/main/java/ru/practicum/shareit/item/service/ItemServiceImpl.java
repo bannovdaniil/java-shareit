@@ -27,7 +27,6 @@ import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -61,7 +60,7 @@ public class ItemServiceImpl implements ItemService {
         checkBlankParameter(itemDto.getDescription());
         userService.checkUserExist(userId);
         Item item = itemMapper.dtoToItem(itemDto);
-        item.setOwner(userId);
+        item.setOwnerId(userId);
         item = itemRepository.save(item);
         return itemMapper.itemToDto(item);
     }
@@ -87,7 +86,7 @@ public class ItemServiceImpl implements ItemService {
         }
         userService.checkUserExist(userId);
         Item checkItem = findFullItemById(itemId);
-        if (!checkItem.getOwner().equals(userId)) {
+        if (!userId.equals(checkItem.getOwnerId())) {
             throw new AccessDeniedException("Other user access denied.");
         }
         Item updateItem = updateItemField(itemDto, checkItem);
@@ -112,7 +111,7 @@ public class ItemServiceImpl implements ItemService {
             throws ItemNotFoundException, UserNotFoundException {
         Item item = findFullItemById(itemId);
         ItemWithBookingDto itemWithBookingDto = itemWithBookingMapper.itemToDto(item);
-        if (userId.equals(item.getOwner())) {
+        if (userId.equals(item.getOwnerId())) {
             List<BookingOutDto> bookingOutDtoList
                     = bookingService.findAllBookingByOwnerIdAndItemId(itemWithBookingDto.getOwner(), itemId);
             if (bookingOutDtoList.size() > 0) {
@@ -134,9 +133,8 @@ public class ItemServiceImpl implements ItemService {
         if (bookingList.size() == 0) {
             throw new InvalidParameterException("Can't select any booking.");
         }
-        CommentDto commentDto = commentService.addCommentToItem(user, item, commentInDto);
 
-        return commentDto;
+        return commentService.addCommentToItem(user, item, commentInDto);
     }
 
     private BookingItemDto getBookingItemDto(BookingOutDto bookingOutDto) {
@@ -152,17 +150,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item findFullItemById(Long itemId) throws ItemNotFoundException {
-        Optional<Item> item = itemRepository.findById(itemId);
-        if (item.isEmpty()) {
-            throw new ItemNotFoundException("Item ID not found.");
-        }
-        return item.get();
+        return itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Item ID not found."));
     }
 
     @Override
     public List<ItemWithBookingDto> findAllByUserId(Long userId) throws UserNotFoundException, ItemNotFoundException {
         userService.checkUserExist(userId);
-        List<Item> itemList = itemRepository.findAllByOwner(userId);
+        List<Item> itemList = itemRepository.findAllByOwnerId(userId);
         List<ItemWithBookingDto> itemWithBookingDtoList = new ArrayList<>();
         for (Item item : itemList) {
             itemWithBookingDtoList.add(findItemWithBookingById(userId, item.getId()));
