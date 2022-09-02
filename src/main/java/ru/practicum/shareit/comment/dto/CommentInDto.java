@@ -7,5 +7,5 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class CommentInDto {
     @NotBlank
-    String text;
+    private String text;
 }

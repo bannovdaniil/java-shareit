@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
 
 @Data
 public class CommentDto {
-    Long id;
-    String text;
+    private Long id;
+    private String text;
     @JsonIgnore
-    Long item;
-    String authorName;
-    LocalDateTime created;
+    private Long item;
+    private String authorName;
+    private LocalDateTime created;
 }
