@@ -50,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingOutDto;
     }
 
-    private static void checkCorrectDateTime(BookingInDto bookingInDto) throws BookingErrorException {
+    private void checkCorrectDateTime(BookingInDto bookingInDto) throws BookingErrorException {
         if (bookingInDto.getStart().isBefore(LocalDateTime.now())) {
             throw new BookingErrorException("Wrong start date.");
         }
@@ -135,7 +135,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingListToOutDtoList(bookingList);
     }
 
-    private static void checkStateValue(String state) throws BookingErrorException {
+    private void checkStateValue(String state) throws BookingErrorException {
         List<String> stateList = List.of("ALL", "CURRENT", "PAST", "FUTURE", "REJECTED", "WAITING");
         if (!stateList.contains(state)) {
             throw new BookingErrorException("Unknown state: UNSUPPORTED_STATUS");
@@ -175,6 +175,11 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingOutDto> findAllBookingByOwnerIdAndItemId(Long ownerId, Long itemId)
             throws UserNotFoundException, ItemNotFoundException {
         return bookingListToOutDtoList(bookingRepository.findAllByItemOwnerAndItemIdOrderByStartAsc(ownerId, itemId));
+    }
+
+    @Override
+    public List<Booking> findAllBookingByUserIdAndItemId(Long userId, Long itemId, LocalDateTime dateTime) {
+        return bookingRepository.findAllByItemUserIdAndItemIdOrderByStartDesc(userId, itemId, dateTime);
     }
 
     private List<BookingOutDto> bookingListToOutDtoList(List<Booking> bookingList)

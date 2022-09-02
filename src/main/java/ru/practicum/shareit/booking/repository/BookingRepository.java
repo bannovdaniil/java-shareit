@@ -91,4 +91,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             " ORDER BY b.start ASC "
     )
     List<Booking> findAllByItemOwnerAndItemIdOrderByStartAsc(Long ownerId, Long itemId);
+
+    @Query("SELECT b FROM Booking as b " +
+            " JOIN Item as i ON b.itemId = i.id" +
+            " WHERE i.id = :itemId " +
+            " AND b.booker = :userId " +
+            " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.APPROVED " +
+            " AND b.end < :dateTime " +
+            " ORDER BY b.start DESC "
+    )
+    List<Booking> findAllByItemUserIdAndItemIdOrderByStartDesc(Long userId, Long itemId, LocalDateTime dateTime);
 }

@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.exception.BookingErrorException;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.dto.CommentInDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
@@ -55,5 +57,16 @@ public class ItemController {
     @GetMapping("search")
     public List<ItemDto> findItemsByQueryText(@RequestParam(name = "text", defaultValue = "") String queryText) {
         return itemService.findItemsByQueryText(queryText);
+    }
+
+    @PostMapping("{itemId}/comment")
+    public CommentDto addCommentToItem(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
+                                       @NotNull @PathVariable Long itemId,
+                                       @Valid @RequestBody CommentInDto commentInDto)
+            throws
+            UserNotFoundException,
+            ItemNotFoundException,
+            AccessDeniedException {
+        return itemService.addCommentToItem(userId, itemId, commentInDto);
     }
 }
