@@ -3,7 +3,11 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.booking.exception.BookingErrorException;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.dto.CommentInDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
@@ -21,8 +25,8 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<ItemDto> findAllItemsByUserId(@NotNull @RequestHeader(name = "X-Sharer-User-Id") Long userId)
-            throws UserNotFoundException {
+    public List<ItemWithBookingDto> findAllItemsByUserId(@NotNull @RequestHeader(name = "X-Sharer-User-Id") Long userId)
+            throws UserNotFoundException, BookingErrorException, ItemNotFoundException {
         return itemService.findAllByUserId(userId);
     }
 
@@ -33,8 +37,10 @@ public class ItemController {
     }
 
     @GetMapping("{itemId}")
-    public ItemDto findItemById(@NotNull @PathVariable Long itemId) throws ItemNotFoundException {
-        return itemService.findItemById(itemId);
+    public ItemWithBookingDto findItemById(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
+                                           @NotNull @PathVariable Long itemId)
+            throws ItemNotFoundException, UserNotFoundException, BookingErrorException {
+        return itemService.findItemWithBookingById(userId, itemId);
     }
 
     @PatchMapping("{itemId}")
@@ -51,5 +57,16 @@ public class ItemController {
     @GetMapping("search")
     public List<ItemDto> findItemsByQueryText(@RequestParam(name = "text", defaultValue = "") String queryText) {
         return itemService.findItemsByQueryText(queryText);
+    }
+
+    @PostMapping("{itemId}/comment")
+    public CommentDto addCommentToItem(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
+                                       @NotNull @PathVariable Long itemId,
+                                       @Valid @RequestBody CommentInDto commentInDto)
+            throws
+            UserNotFoundException,
+            ItemNotFoundException,
+            AccessDeniedException {
+        return itemService.addCommentToItem(userId, itemId, commentInDto);
     }
 }

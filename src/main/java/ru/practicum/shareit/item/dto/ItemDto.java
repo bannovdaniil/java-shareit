@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
@@ -8,4 +9,6 @@ public class ItemDto {
     private String name;
     private String description;
     private Boolean available;
+    @JsonIgnore
+    private Long owner;
 }

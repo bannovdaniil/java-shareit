@@ -1,7 +1,12 @@
 package ru.practicum.shareit.item.service;
 
+import ru.practicum.shareit.booking.exception.BookingErrorException;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.dto.CommentInDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import java.nio.file.AccessDeniedException;
@@ -14,7 +19,13 @@ public interface ItemService {
 
     ItemDto findItemById(Long itemId) throws ItemNotFoundException;
 
-    List<ItemDto> findAllByUserId(Long userId) throws UserNotFoundException;
+    Item findFullItemById(Long itemId) throws ItemNotFoundException;
+
+    List<ItemWithBookingDto> findAllByUserId(Long userId) throws UserNotFoundException, BookingErrorException, ItemNotFoundException;
 
     List<ItemDto> findItemsByQueryText(String queryText);
+
+    ItemWithBookingDto findItemWithBookingById(Long userId, Long itemId) throws ItemNotFoundException, UserNotFoundException, BookingErrorException;
+
+    CommentDto addCommentToItem(Long userId, Long itemId, CommentInDto commentInDto) throws UserNotFoundException, ItemNotFoundException;
 }

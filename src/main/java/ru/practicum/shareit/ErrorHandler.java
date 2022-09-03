@@ -5,6 +5,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.booking.BookingController;
+import ru.practicum.shareit.booking.exception.BookingErrorException;
+import ru.practicum.shareit.booking.exception.BookingNotFoundException;
 import ru.practicum.shareit.item.ItemController;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.user.UserController;
@@ -16,6 +19,7 @@ import java.security.InvalidParameterException;
 
 @RestControllerAdvice(assignableTypes = {
         UserController.class,
+        BookingController.class,
         ItemController.class})
 public class ErrorHandler {
     private ErrorResponse errorResponse;
@@ -30,6 +34,14 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({
+            BookingErrorException.class
+    })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBookingBadRequest(final Exception e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler({
             AccessDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleForbidden(final Exception e) {
@@ -38,6 +50,7 @@ public class ErrorHandler {
 
     @ExceptionHandler({
             ItemNotFoundException.class,
+            BookingNotFoundException.class,
             UserNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(final Exception e) {
@@ -54,7 +67,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleAllError(final Throwable e) {
-        return new ErrorResponse("Произошла непредвиденная ошибка.");
+        return new ErrorResponse("Произошла непредвиденная ошибка." + e.getMessage());
     }
 
     private static class ErrorResponse {
