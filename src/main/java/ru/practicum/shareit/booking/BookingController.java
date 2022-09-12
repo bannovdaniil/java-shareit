@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingInDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
@@ -11,12 +12,16 @@ import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
+@Validated
 public class BookingController {
     private final BookingService bookingService;
 
@@ -50,17 +55,25 @@ public class BookingController {
     @GetMapping
     public List<BookingOutDto> findAllBookingByUserAndState(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
                                                             @RequestParam(name = "state", required = false, defaultValue = "ALL")
-                                                            String state)
+                                                            String state,
+                                                            @Min(value = 0)
+                                                            @RequestParam(defaultValue = "0") Integer from,
+                                                            @Min(value = 1)
+                                                            @RequestParam(defaultValue = "20") Integer size)
             throws
             UserNotFoundException, ItemNotFoundException, BookingErrorException {
-        return bookingService.findAllBookingByUserAndState(userId, state);
+        return bookingService.findAllBookingByUserAndState(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingOutDto> findAllBookingByOwnerAndState(@RequestHeader(name = "X-Sharer-User-Id") Long ownerId,
                                                              @RequestParam(name = "state", required = false, defaultValue = "ALL")
-                                                             String state)
+                                                             String state,
+                                                             @PositiveOrZero
+                                                             @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                             @Positive
+                                                             @RequestParam(name = "size", defaultValue = "20") Integer size)
             throws UserNotFoundException, ItemNotFoundException, BookingErrorException {
-        return bookingService.findAllBookingByOwnerAndState(ownerId, state);
+        return bookingService.findAllBookingByOwnerAndState(ownerId, state, from, size);
     }
 }

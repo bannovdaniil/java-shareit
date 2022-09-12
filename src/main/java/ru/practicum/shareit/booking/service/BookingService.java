@@ -18,9 +18,9 @@ public interface BookingService {
 
     BookingOutDto findBookingById(Long userId, Long bookingId) throws UserNotFoundException, BookingNotFoundException, ItemNotFoundException;
 
-    List<BookingOutDto> findAllBookingByUserAndState(Long userId, String state) throws UserNotFoundException, ItemNotFoundException, BookingErrorException;
+    List<BookingOutDto> findAllBookingByUserAndState(Long userId, String state, Integer from, Integer size) throws UserNotFoundException, ItemNotFoundException, BookingErrorException;
 
-    List<BookingOutDto> findAllBookingByOwnerAndState(Long ownerId, String state) throws BookingErrorException, UserNotFoundException, ItemNotFoundException;
+    List<BookingOutDto> findAllBookingByOwnerAndState(Long ownerId, String state, Integer from, Integer size) throws BookingErrorException, UserNotFoundException, ItemNotFoundException;
 
     List<BookingOutDto> findAllBookingByOwnerIdAndItemId(Long owner, Long itemId) throws UserNotFoundException, ItemNotFoundException;
 

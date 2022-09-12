@@ -66,7 +66,7 @@ public class RequestServiceImpl implements RequestService {
     public List<RequestDto> getPageableRequestById(Long userId, Integer from, Integer size) throws UserNotFoundException {
         userService.checkUserExist(userId);
         Sort sort = Sort.sort(Request.class).by(Request::getCreated).descending();
-        Pageable pageable = PageRequest.of(from, size, sort);
+        Pageable pageable = PageRequest.of(from / size, size, sort);
         List<RequestDto> requestInDtoList = new ArrayList<>();
         Page<Request> requestList = requestRepository.findByRequestorIdIsNot(pageable, userId);
         for (Request request : requestList) {

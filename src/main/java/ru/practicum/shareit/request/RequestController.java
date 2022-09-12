@@ -10,8 +10,9 @@ import ru.practicum.shareit.request.service.RequestService;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -42,10 +43,10 @@ public class RequestController {
 
     @GetMapping("all")
     public List<RequestDto> getPageableRequestById(@NotNull @RequestHeader(name = "X-Sharer-User-Id") Long userId,
-                                                   @Min(value = 0)
-                                                   @RequestParam(defaultValue = "0") Integer from,
-                                                   @Min(value = 1)
-                                                   @RequestParam(defaultValue = "20") Integer size)
+                                                   @PositiveOrZero
+                                                   @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                   @Positive
+                                                   @RequestParam(name = "size", defaultValue = "20") Integer size)
             throws UserNotFoundException {
         return requestService.getPageableRequestById(userId, from, size);
     }
