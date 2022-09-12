@@ -13,4 +13,6 @@ public interface RequestService {
     List<RequestDto> findAllRequestByUserId(Long userId) throws UserNotFoundException;
 
     RequestDto getRequestById(Long userId, Long requestId) throws UserNotFoundException, RequestNotFoundException;
+
+    List<RequestDto> getPageableRequestById(Long userId, Integer from, Integer size) throws UserNotFoundException;
 }
