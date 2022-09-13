@@ -29,9 +29,13 @@ public class RequestController {
     }
 
     @GetMapping
-    public List<RequestDto> findAllRequestByUserId(@NotNull @RequestHeader(name = "X-Sharer-User-Id") Long userId)
+    public List<RequestDto> findAllRequestByUserId(@NotNull @RequestHeader(name = "X-Sharer-User-Id") Long userId,
+                                                   @PositiveOrZero
+                                                   @RequestParam(defaultValue = "0") Integer from,
+                                                   @Positive
+                                                   @RequestParam(defaultValue = "20") Integer size)
             throws UserNotFoundException {
-        return requestService.findAllRequestByUserId(userId);
+        return requestService.findAllRequestByUserId(userId, from, size);
     }
 
     @GetMapping("{requestId}")

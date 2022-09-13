@@ -21,9 +21,9 @@ public interface ItemService {
 
     Item findFullItemById(Long itemId) throws ItemNotFoundException;
 
-    List<ItemWithBookingDto> findAllByUserId(Long userId) throws UserNotFoundException, BookingErrorException, ItemNotFoundException;
+    List<ItemWithBookingDto> findAllByUserId(Long userId, Integer from, Integer size) throws UserNotFoundException, BookingErrorException, ItemNotFoundException;
 
-    List<ItemDto> findItemsByQueryText(String queryText);
+    List<ItemDto> findItemsByQueryText(String queryText, Integer from, Integer size);
 
     ItemWithBookingDto findItemWithBookingById(Long userId, Long itemId) throws ItemNotFoundException, UserNotFoundException, BookingErrorException;
 

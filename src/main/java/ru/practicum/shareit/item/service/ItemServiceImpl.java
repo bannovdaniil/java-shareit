@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingItemDto;
@@ -154,9 +156,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemWithBookingDto> findAllByUserId(Long userId) throws UserNotFoundException, ItemNotFoundException {
+    public List<ItemWithBookingDto> findAllByUserId(Long userId, Integer from, Integer size) throws UserNotFoundException, ItemNotFoundException {
         userService.checkUserExist(userId);
-        List<Item> itemList = itemRepository.findAllByOwnerId(userId);
+        Pageable pageable = PageRequest.of(from / size, size);
+        List<Item> itemList = itemRepository.findAllByOwnerId(pageable, userId);
         List<ItemWithBookingDto> itemWithBookingDtoList = new ArrayList<>();
         for (Item item : itemList) {
             itemWithBookingDtoList.add(findItemWithBookingById(userId, item.getId()));
@@ -165,12 +168,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> findItemsByQueryText(String queryText) {
+    public List<ItemDto> findItemsByQueryText(String queryText, Integer from, Integer size) {
         if (queryText.trim().isBlank()) {
             return new ArrayList<>();
         }
+        Pageable pageable = PageRequest.of(from / size, size);
         return itemMapper.itemListToDto(
-                itemRepository.findItemByAvailableAndQueryContainWithIgnoreCase(queryText)
+                itemRepository.findItemByAvailableAndQueryContainWithIgnoreCase(pageable, queryText)
         );
     }
 }

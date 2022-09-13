@@ -40,10 +40,11 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<RequestDto> findAllRequestByUserId(Long userId) throws UserNotFoundException {
+    public List<RequestDto> findAllRequestByUserId(Long userId, Integer from, Integer size) throws UserNotFoundException {
         userService.checkUserExist(userId);
         List<RequestDto> requestInDtoList = new ArrayList<>();
-        List<Request> requestList = requestRepository.findByRequestorId(userId);
+        Pageable pageable = PageRequest.of(from / size, size);
+        List<Request> requestList = requestRepository.findByRequestorId(pageable, userId);
         for (Request request : requestList) {
             RequestDto requestDto = requestMapper.requestToDto(request);
             requestDto.setItems(itemMapper.itemListToDto(request.getItems()));

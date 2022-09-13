@@ -8,7 +8,7 @@ import ru.practicum.shareit.user.model.User;
 import java.util.List;
 
 public interface UserService {
-    List<UserDto> findAll();
+    List<UserDto> findAll(Integer from, Integer size);
 
     UserDto createUser(UserDto userDto) throws UserEmailExistException;
 

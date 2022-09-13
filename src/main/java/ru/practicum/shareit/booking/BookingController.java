@@ -12,7 +12,6 @@ import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -56,9 +55,9 @@ public class BookingController {
     public List<BookingOutDto> findAllBookingByUserAndState(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
                                                             @RequestParam(name = "state", required = false, defaultValue = "ALL")
                                                             String state,
-                                                            @Min(value = 0)
+                                                            @PositiveOrZero
                                                             @RequestParam(defaultValue = "0") Integer from,
-                                                            @Min(value = 1)
+                                                            @Positive
                                                             @RequestParam(defaultValue = "20") Integer size)
             throws
             UserNotFoundException, ItemNotFoundException, BookingErrorException {

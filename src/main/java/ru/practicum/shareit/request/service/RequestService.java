@@ -10,7 +10,7 @@ import java.util.List;
 public interface RequestService {
     RequestDto createItemRequest(Long userId, RequestInDto requestInDto) throws UserNotFoundException;
 
-    List<RequestDto> findAllRequestByUserId(Long userId) throws UserNotFoundException;
+    List<RequestDto> findAllRequestByUserId(Long userId, Integer from, Integer size) throws UserNotFoundException;
 
     RequestDto getRequestById(Long userId, Long requestId) throws UserNotFoundException, RequestNotFoundException;
 

@@ -10,6 +10,8 @@ import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -20,8 +22,11 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserDto> findAllUsers() {
-        return userService.findAll();
+    public List<UserDto> findAllUsers(@PositiveOrZero
+                                      @RequestParam(defaultValue = "0") Integer from,
+                                      @Positive
+                                      @RequestParam(defaultValue = "20") Integer size) {
+        return userService.findAll(from, size);
     }
 
     @PostMapping
@@ -36,7 +41,7 @@ public class UserController {
 
     @PatchMapping("{userId}")
     public UserDto updateUser(@NotNull @PathVariable Long userId,
-                               @Valid @RequestBody UserDto userDto) throws UserNotFoundException, UserEmailExistException {
+                              @Valid @RequestBody UserDto userDto) throws UserNotFoundException, UserEmailExistException {
         return userService.updateUser(userId, userDto);
     }
 

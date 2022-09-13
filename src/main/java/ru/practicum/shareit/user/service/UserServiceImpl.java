@@ -1,10 +1,11 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.exception.UserEmailExistException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -20,8 +21,9 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public List<UserDto> findAll() {
-        return userMapper.userListToDto(userRepository.findAll());
+    public List<UserDto> findAll(Integer from, Integer size) {
+        Pageable pageable = PageRequest.of(from / size, size);
+        return userMapper.userListToDto(userRepository.findAll(pageable).toList());
     }
 
     @Override
@@ -57,12 +59,6 @@ public class UserServiceImpl implements UserService {
         }
         User user = userRepository.save(updateUser);
         return userMapper.userToDto(user);
-    }
-
-    private void checkUserByEmailExist(String email) throws UserEmailExistException {
-        if (userRepository.findUserByEmail(email).isPresent()) {
-            throw new UserEmailExistException("User with this Email exists.");
-        }
     }
 
     @Override
