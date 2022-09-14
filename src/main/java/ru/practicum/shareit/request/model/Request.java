@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.util.List;
 @Table(name = "requests", schema = "public")
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
 public class Request {
     @Id

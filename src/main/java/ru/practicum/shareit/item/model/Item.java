@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.shareit.comment.model.Comment;
 
@@ -14,6 +16,8 @@ import java.util.List;
 @Table(name = "items", schema = "public")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

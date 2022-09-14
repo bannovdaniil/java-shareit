@@ -47,8 +47,8 @@ class UserDtoTest {
     @DisplayName("Email validation")
     @ParameterizedTest
     @CsvSource({
-            "'', 0, NotBlank.message",
-            "null, 0, NotBlank.message",
+            "'', 1, NotBlank.message",
+            "null, 1, NotBlank.message",
             "email, 1, Email.message",
             "@email, 1, Email.message",
             "email@, 1, Email.message",
@@ -56,7 +56,7 @@ class UserDtoTest {
             "'ema il@dd', 1, Email.message",
             "'name@email.com', 0, OK"
     })
-    void textNotBlank(String email, int expectSize, String expectedMessage) {
+    void emailValidation(String email, int expectSize, String expectedMessage) {
         if ("null".equals(email)) {
             email = null;
         }
