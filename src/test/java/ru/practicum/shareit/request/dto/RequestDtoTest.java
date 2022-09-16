@@ -37,6 +37,6 @@ class RequestDtoTest {
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(dto.getId().intValue());
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo(dto.getDescription());
         assertThat(result).extractingJsonPathNumberValue("$.requestorId").isEqualTo(dto.getRequestorId().intValue());
-        assertThat(result).extractingJsonPathStringValue("$.created").contains(dto.getCreated().format(dtf));
+        assertThat(result).extractingJsonPathStringValue("$.created").startsWith(dto.getCreated().format(dtf));
     }
 }

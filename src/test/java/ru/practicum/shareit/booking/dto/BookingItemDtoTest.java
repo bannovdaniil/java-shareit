@@ -37,7 +37,7 @@ class BookingItemDtoTest {
 
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(dto.getId().intValue());
         assertThat(result).extractingJsonPathNumberValue("$.bookerId").isEqualTo(dto.getBookerId().intValue());
-        assertThat(result).extractingJsonPathStringValue("$.start").contains(dto.getStart().format(dtf));
-        assertThat(result).extractingJsonPathStringValue("$.end").contains(dto.getEnd().format(dtf));
+        assertThat(result).extractingJsonPathStringValue("$.start").startsWith(dto.getStart().format(dtf));
+        assertThat(result).extractingJsonPathStringValue("$.end").startsWith(dto.getEnd().format(dtf));
     }
 }

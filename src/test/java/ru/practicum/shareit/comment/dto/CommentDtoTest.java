@@ -36,6 +36,6 @@ class CommentDtoTest {
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(dto.getId().intValue());
         assertThat(result).extractingJsonPathStringValue("$.text").isEqualTo(dto.getText());
         assertThat(result).extractingJsonPathStringValue("$.authorName").isEqualTo(dto.getAuthorName());
-        assertThat(result).extractingJsonPathStringValue("$.created").contains(dto.getCreated().format(dtf));
+        assertThat(result).extractingJsonPathStringValue("$.created").startsWith(dto.getCreated().format(dtf));
     }
 }
