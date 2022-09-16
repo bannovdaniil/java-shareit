@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.repository;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,47 +153,136 @@ class BookingRepositoryTest {
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
-    @Test
-    void findAllByBookerIdAndStartIsAfterOrderByStartDesc() {
+    @ParameterizedTest
+    @CsvSource({
+            "1, -1, 2, 'start = -1 day'",
+            "2, -1, 2, 'start = -1 day'",
+            "3, 1, 0, ' start = 0'",
+            "4, -1, 1, 'start = -1 day'",
+    })
+    void findAllByBookerIdAndStartIsAfterOrderByStartDesc(Long userId, int day, int expectedSize) {
+        var expectedPeriod = LocalDateTime.now().plusDays(day);
+        var bookingList = bookingRepository.findAllByBookerIdAndStartIsAfterOrderByStartDesc(pageable, userId, expectedPeriod);
+        assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
-    @Test
-    void findAllByBookerIdAndEndIsBeforeOrderByStartDesc() {
+    @ParameterizedTest
+    @CsvSource({
+            "1, 3, 2, 'start = +3 day'",
+            "2, 1, 0, 'start = +2 day'",
+            "3, 1, 0, ' start = +1 day'",
+            "4, 0, 0, 'start = 0 day'",
+    })
+    void findAllByBookerIdAndEndIsBeforeOrderByStartDesc(Long userId, int day, int expectedSize) {
+        var expectedPeriod = LocalDateTime.now().plusDays(day);
+        var bookingList = bookingRepository.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(pageable, userId, expectedPeriod);
+        assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
-    @Test
-    void findAllByBookerIdOrderByStartDesc() {
+    @ParameterizedTest
+    @CsvSource({
+            "1, 2, 'booking3, booking6'",
+            "2, 2, 'booking1, booking5'",
+            "3, 1, 'booking2'",
+            "4, 1, 'booking4'",
+    })
+    void findAllByBookerIdOrderByStartDesc(Long userId, int expectedSize) {
+        var bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(pageable, userId);
+        assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
-    @Test
-    void findAllByItemUserIdAndItemIdOrderByStartDesc() {
+    @ParameterizedTest
+    @CsvSource({
+            "2, 1, 2, 0, 'non, REJECTED'",
+            "4, 2, 3, 0, 'non, end > time, WATTING'",
+            "1, 2, 3, 1, 'booking6 APPROVED'",
+    })
+    void findAllByItemUserIdAndItemIdOrderByStartDesc(Long userId, Long itemId, int day, int expectedSize) {
+        var expectedPeriod = LocalDateTime.now().plusDays(day);
+        var bookingList = bookingRepository.findAllByItemUserIdAndItemIdOrderByStartDesc(pageable, userId, itemId, expectedPeriod);
+        assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
-    @Test
-    void findAllByItemOwnerOrderByStartDesc() {
+    @ParameterizedTest
+    @CsvSource({
+            "1, 3, 'item1 -> {booking1, booking2, booking5}'",
+            "2, 0, 'non'",
+            "3, 3, 'item2 -> {booking3, booking4, booking6}'",
+    })
+    void findAllByItemOwnerOrderByStartDesc(Long ownerId, int expectedSize) {
+        var bookingList = bookingRepository.findAllByItemOwnerOrderByStartDesc(pageable, ownerId);
+        assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
-    @Test
-    void findAllByItemOwnerAndStartIsAfterOrderByStartDesc() {
+    @ParameterizedTest
+    @CsvSource({
+            "1, -1, 3, 'start = -1 day'",
+            "1, 1, 0, 'start = day'",
+            "3, -1, 3, 'start = -1 day'",
+            "3, 1, 0, ' start = +1'",
+    })
+    void findAllByItemOwnerAndStartIsAfterOrderByStartDesc(Long userId, int day, int expectedSize) {
+        var expectedPeriod = LocalDateTime.now().plusDays(day);
+        var bookingList = bookingRepository.findAllByItemOwnerAndStartIsAfterOrderByStartDesc(pageable, userId, expectedPeriod);
+        assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
-    @Test
-    void findAllByItemOwnerAndStateRejectedOrderByStartDesc() {
+    @ParameterizedTest
+    @CsvSource({
+            "1, 3, 'item1 -> {booking1, booking2, booking5}'",
+            "2, 0, 'non'",
+            "3, 0, 'item2 -> {booking3, booking4, booking6}'",
+    })
+    void findAllByItemOwnerAndStateRejectedOrderByStartDesc(Long ownerId, int expectedSize) {
+        var bookingList = bookingRepository.findAllByItemOwnerAndStateRejectedOrderByStartDesc(pageable, ownerId);
+        assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
-    @Test
-    void findAllByItemOwnerAndStateWaitingOrderByStartDesc() {
+    @ParameterizedTest
+    @CsvSource({
+            "1, 0, 'non'",
+            "2, 0, 'non'",
+            "3, 2, 'item2 -> {booking3, booking4}'",
+    })
+    void findAllByItemOwnerAndStateWaitingOrderByStartDesc(Long ownerId, int expectedSize) {
+        var bookingList = bookingRepository.findAllByItemOwnerAndStateWaitingOrderByStartDesc(pageable, ownerId);
+        assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
-    @Test
-    void findAllByItemOwnerByDateIntoPeriodOrderByStartDesc() {
+    @ParameterizedTest
+    @CsvSource({
+            "1, 3, 0, '+3 day, non'",
+            "1, 1, 3, 'booking1, booking2, booking5'",
+            "3, 1, 3, 'booking3, booking4, booking6'",
+            "3, -2, 0, '-2 day, non'",
+    })
+    void findAllByItemOwnerByDateIntoPeriodOrderByStartDesc(Long userId, int day, int expectedSize) {
+        var expectedPeriod = LocalDateTime.now().plusDays(day);
+        var bookingList = bookingRepository.findAllByItemOwnerByDateIntoPeriodOrderByStartDesc(pageable, userId, expectedPeriod);
+        assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
-    @Test
-    void findAllByItemOwnerAndEndIsBeforeOrderByStartDesc() {
+    @ParameterizedTest
+    @CsvSource({
+            "1, 3, 3, '+3 day, -> booking1, booking2, booking5'",
+            "1, 1, 0, '+1 day, non'",
+            "3, 2, 3, '+2 day, -> booking3, booking4, booking6'",
+            "3, -2, 0, '-2 day, non'",
+    })
+    void findAllByItemOwnerAndEndIsBeforeOrderByStartDesc(Long userId, int day, int expectedSize) {
+        var expectedPeriod = LocalDateTime.now().plusDays(day);
+        var bookingList = bookingRepository.findAllByItemOwnerAndEndIsBeforeOrderByStartDesc(pageable, userId, expectedPeriod);
+        assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
-    @Test
-    void findAllByItemOwnerAndItemIdOrderByStartAsc() {
+    @ParameterizedTest
+    @CsvSource({
+            "1, 1, 3, 'item1 -> {booking1, booking2, booking5}'",
+            "2, 1, 0, 'non'",
+            "3, 2, 3, 'item2 -> {booking3, booking4, booking6}'",
+    })
+    void findAllByItemOwnerAndItemIdOrderByStartAsc(Long userId, Long itemId, int expectedSize) {
+        var bookingList = bookingRepository.findAllByItemOwnerAndItemIdOrderByStartAsc(pageable, userId, itemId);
+        assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 }

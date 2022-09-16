@@ -49,7 +49,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             " AND b.end < :dateTime " +
             " ORDER BY b.start DESC "
     )
-    List<Booking> findAllByItemUserIdAndItemIdOrderByStartDesc(Long userId, Long itemId, LocalDateTime dateTime);
+    List<Booking> findAllByItemUserIdAndItemIdOrderByStartDesc(Pageable pageable, Long userId, Long itemId, LocalDateTime dateTime);
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
@@ -101,5 +101,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             " AND i.id = :itemId " +
             " ORDER BY b.start ASC "
     )
-    List<Booking> findAllByItemOwnerAndItemIdOrderByStartAsc(Long ownerId, Long itemId);
+    List<Booking> findAllByItemOwnerAndItemIdOrderByStartAsc(Pageable pageable, Long ownerId, Long itemId);
 }

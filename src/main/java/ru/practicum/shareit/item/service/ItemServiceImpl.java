@@ -114,8 +114,9 @@ public class ItemServiceImpl implements ItemService {
         Item item = findFullItemById(itemId);
         ItemWithBookingDto itemWithBookingDto = itemWithBookingMapper.itemToDto(item);
         if (userId.equals(item.getOwnerId())) {
+            Pageable pageable = PageRequest.of(0, 20);
             List<BookingOutDto> bookingOutDtoList
-                    = bookingService.findAllBookingByOwnerIdAndItemId(itemWithBookingDto.getOwner(), itemId);
+                    = bookingService.findAllBookingByOwnerIdAndItemId(pageable, itemWithBookingDto.getOwner(), itemId);
             if (bookingOutDtoList.size() > 0) {
                 itemWithBookingDto.setLastBooking(getBookingItemDto(bookingOutDtoList.get(0)));
             }
@@ -131,7 +132,8 @@ public class ItemServiceImpl implements ItemService {
     public CommentDto addCommentToItem(Long userId, Long itemId, CommentInDto commentInDto) throws UserNotFoundException, ItemNotFoundException {
         User user = userService.findFullUserById(userId);
         Item item = findFullItemById(itemId);
-        List<Booking> bookingList = bookingService.findAllBookingByUserIdAndItemId(userId, itemId, LocalDateTime.now());
+        Pageable pageable = PageRequest.of(0, 20);
+        List<Booking> bookingList = bookingService.findAllBookingByUserIdAndItemId(pageable, userId, itemId, LocalDateTime.now());
         if (bookingList.size() == 0) {
             throw new InvalidParameterException("Can't select any booking.");
         }

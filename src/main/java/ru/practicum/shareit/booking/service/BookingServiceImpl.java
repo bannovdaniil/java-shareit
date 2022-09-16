@@ -170,14 +170,14 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingOutDto> findAllBookingByOwnerIdAndItemId(Long ownerId, Long itemId)
+    public List<BookingOutDto> findAllBookingByOwnerIdAndItemId(Pageable pageable, Long ownerId, Long itemId)
             throws UserNotFoundException, ItemNotFoundException {
-        return bookingListToOutDtoList(bookingRepository.findAllByItemOwnerAndItemIdOrderByStartAsc(ownerId, itemId));
+        return bookingListToOutDtoList(bookingRepository.findAllByItemOwnerAndItemIdOrderByStartAsc(pageable, ownerId, itemId));
     }
 
     @Override
-    public List<Booking> findAllBookingByUserIdAndItemId(Long userId, Long itemId, LocalDateTime dateTime) {
-        return bookingRepository.findAllByItemUserIdAndItemIdOrderByStartDesc(userId, itemId, dateTime);
+    public List<Booking> findAllBookingByUserIdAndItemId(Pageable pageable, Long userId, Long itemId, LocalDateTime dateTime) {
+        return bookingRepository.findAllByItemUserIdAndItemIdOrderByStartDesc(pageable, userId, itemId, dateTime);
     }
 
     private List<BookingOutDto> bookingListToOutDtoList(List<Booking> bookingList)

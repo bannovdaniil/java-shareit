@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingInDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
 import ru.practicum.shareit.booking.exception.BookingErrorException;
@@ -22,7 +23,7 @@ public interface BookingService {
 
     List<BookingOutDto> findAllBookingByOwnerAndState(Long ownerId, String state, Integer from, Integer size) throws BookingErrorException, UserNotFoundException, ItemNotFoundException;
 
-    List<BookingOutDto> findAllBookingByOwnerIdAndItemId(Long owner, Long itemId) throws UserNotFoundException, ItemNotFoundException;
+    List<BookingOutDto> findAllBookingByOwnerIdAndItemId(Pageable pageable, Long owner, Long itemId) throws UserNotFoundException, ItemNotFoundException;
 
-    List<Booking> findAllBookingByUserIdAndItemId(Long userId, Long itemId, LocalDateTime dateTime);
+    List<Booking> findAllBookingByUserIdAndItemId(Pageable pageable, Long userId, Long itemId, LocalDateTime dateTime);
 }
