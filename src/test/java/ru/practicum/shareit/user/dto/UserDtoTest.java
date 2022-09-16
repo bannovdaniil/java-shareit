@@ -47,8 +47,6 @@ class UserDtoTest {
     @DisplayName("Email validation")
     @ParameterizedTest
     @CsvSource({
-            "'', 1, NotBlank.message",
-            "null, 1, NotBlank.message",
             "email, 1, Email.message",
             "@email, 1, Email.message",
             "email@, 1, Email.message",
