@@ -3,6 +3,7 @@ package ru.practicum.shareit.request;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.Constants;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.dto.RequestInDto;
 import ru.practicum.shareit.request.exception.RequestNotFoundException;
@@ -33,7 +34,7 @@ public class RequestController {
                                                    @PositiveOrZero
                                                    @RequestParam(defaultValue = "0") Integer from,
                                                    @Positive
-                                                   @RequestParam(defaultValue = "20") Integer size)
+                                                   @RequestParam(defaultValue = Constants.PAGE_SIZE_STRING) Integer size)
             throws UserNotFoundException {
         return requestService.findAllRequestByUserId(userId, from, size);
     }
@@ -50,7 +51,7 @@ public class RequestController {
                                                    @PositiveOrZero
                                                    @RequestParam(name = "from", defaultValue = "0") Integer from,
                                                    @Positive
-                                                   @RequestParam(name = "size", defaultValue = "20") Integer size)
+                                                   @RequestParam(name = "size", defaultValue = Constants.PAGE_SIZE_STRING) Integer size)
             throws UserNotFoundException {
         return requestService.getPageableRequestById(userId, from, size);
     }

@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.Constants;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
@@ -28,7 +29,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class BookingRepositoryTest {
     private final BookingRepository bookingRepository;
     private final ItemRepository itemRepository;
-    private final Pageable pageable = PageRequest.of(0, 20);
+    private final Pageable pageable = PageRequest.of(0, Constants.PAGE_SIZE_NUM);
 
     @BeforeEach
     void setUp() {

@@ -3,6 +3,7 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.Constants;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exception.UserEmailExistException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
@@ -25,7 +26,7 @@ public class UserController {
     public List<UserDto> findAllUsers(@PositiveOrZero
                                       @RequestParam(defaultValue = "0") Integer from,
                                       @Positive
-                                      @RequestParam(defaultValue = "20") Integer size) {
+                                      @RequestParam(defaultValue = Constants.PAGE_SIZE_STRING) Integer size) {
         return userService.findAll(from, size);
     }
 

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import ru.practicum.shareit.Constants;
 import ru.practicum.shareit.request.model.Request;
 
 import javax.transaction.Transactional;
@@ -23,26 +24,23 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class RequestRepositoryTest {
     private final RequestRepository requestRepository;
-    private Request request1;
-    private Request request2;
-    private Request request3;
-    private final Pageable pageable = PageRequest.of(0, 20);
+    private final Pageable pageable = PageRequest.of(0, Constants.PAGE_SIZE_NUM);
 
     @BeforeEach
     void setUp() {
-        request1 = requestRepository.save(new Request(
+        requestRepository.save(new Request(
                 null,
                 "description 1",
                 1L,
                 LocalDateTime.now(),
                 new ArrayList<>()));
-        request2 = requestRepository.save(new Request(
+        requestRepository.save(new Request(
                 null,
                 "description 1",
                 3L,
                 LocalDateTime.now(),
                 new ArrayList<>()));
-        request3 = requestRepository.save(new Request(
+        requestRepository.save(new Request(
                 null,
                 "description 1",
                 3L,

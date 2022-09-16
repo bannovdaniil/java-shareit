@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import ru.practicum.shareit.Constants;
 import ru.practicum.shareit.item.model.Item;
 
 import javax.transaction.Transactional;
@@ -20,15 +21,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class ItemRepositoryTest {
     private final ItemRepository itemRepository;
-    private Item item1;
-    private Item item2;
-    private Item item3;
-    private Item item4;
-    private final Pageable pageable = PageRequest.of(0, 20);
+    private final Pageable pageable = PageRequest.of(0, Constants.PAGE_SIZE_NUM);
 
     @BeforeEach
     void setUp() {
-        item1 = itemRepository.save(new Item(
+        itemRepository.save(new Item(
                 null,
                 "Отвертка",
                 "Плоская отвертка",
@@ -36,7 +33,7 @@ class ItemRepositoryTest {
                 1L,
                 1L,
                 new ArrayList<>()));
-        item2 = itemRepository.save(new Item(
+        itemRepository.save(new Item(
                 null,
                 "Отвертка",
                 "Крестовая отвертка",
@@ -44,7 +41,7 @@ class ItemRepositoryTest {
                 3L,
                 1L,
                 new ArrayList<>()));
-        item3 = itemRepository.save(new Item(
+        itemRepository.save(new Item(
                 null,
                 "Отвертка",
                 "Отвертка со сменной битой",
@@ -52,7 +49,7 @@ class ItemRepositoryTest {
                 3L,
                 1L,
                 new ArrayList<>()));
-        item4 = itemRepository.save(new Item(
+        itemRepository.save(new Item(
                 null,
                 "Молоток",
                 "Молоток для плотника",

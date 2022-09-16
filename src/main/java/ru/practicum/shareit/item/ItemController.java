@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.Constants;
 import ru.practicum.shareit.booking.exception.BookingErrorException;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.dto.CommentInDto;
@@ -31,7 +32,7 @@ public class ItemController {
                                                          @PositiveOrZero
                                                          @RequestParam(defaultValue = "0") Integer from,
                                                          @Positive
-                                                         @RequestParam(defaultValue = "20") Integer size)
+                                                         @RequestParam(defaultValue = Constants.PAGE_SIZE_STRING) Integer size)
             throws UserNotFoundException, BookingErrorException, ItemNotFoundException {
         return itemService.findAllByUserId(userId, from, size);
     }
@@ -65,7 +66,7 @@ public class ItemController {
                                               @PositiveOrZero
                                               @RequestParam(defaultValue = "0") Integer from,
                                               @Positive
-                                              @RequestParam(defaultValue = "20") Integer size) {
+                                              @RequestParam(defaultValue = Constants.PAGE_SIZE_STRING) Integer size) {
         return itemService.findItemsByQueryText(queryText, from, size);
     }
 

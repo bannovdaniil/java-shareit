@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.Constants;
 import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -114,7 +115,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = findFullItemById(itemId);
         ItemWithBookingDto itemWithBookingDto = itemWithBookingMapper.itemToDto(item);
         if (userId.equals(item.getOwnerId())) {
-            Pageable pageable = PageRequest.of(0, 20);
+            Pageable pageable = PageRequest.of(0, Constants.PAGE_SIZE_NUM);
             List<BookingOutDto> bookingOutDtoList
                     = bookingService.findAllBookingByOwnerIdAndItemId(pageable, itemWithBookingDto.getOwner(), itemId);
             if (bookingOutDtoList.size() > 0) {
@@ -132,7 +133,7 @@ public class ItemServiceImpl implements ItemService {
     public CommentDto addCommentToItem(Long userId, Long itemId, CommentInDto commentInDto) throws UserNotFoundException, ItemNotFoundException {
         User user = userService.findFullUserById(userId);
         Item item = findFullItemById(itemId);
-        Pageable pageable = PageRequest.of(0, 20);
+        Pageable pageable = PageRequest.of(0, Constants.PAGE_SIZE_NUM);
         List<Booking> bookingList = bookingService.findAllBookingByUserIdAndItemId(pageable, userId, itemId, LocalDateTime.now());
         if (bookingList.size() == 0) {
             throw new InvalidParameterException("Can't select any booking.");
