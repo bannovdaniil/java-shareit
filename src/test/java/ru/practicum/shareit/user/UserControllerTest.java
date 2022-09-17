@@ -1,17 +1,19 @@
 package ru.practicum.shareit.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.shareit.Constants;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
@@ -26,26 +28,26 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(UserController.class)
 @AutoConfigureMockMvc
+@ExtendWith(MockitoExtension.class)
 class UserControllerTest {
-    @MockBean
+    private final ObjectMapper mapper = new ObjectMapper();
+    @Mock
     private UserService userService;
+    @InjectMocks
+    private UserController controller;
     @Autowired
     private MockMvc mockMvc;
-    private final ObjectMapper mapper = new ObjectMapper();
-
     private UserDto userDto;
     private UserDto editUserDto;
 
     @BeforeEach
     void setUp() {
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(controller)
+                .build();
         userDto = new UserDto(1L, "User 1 name", "user1@mail.ru");
         editUserDto = new UserDto(1L, "Edit 1 name", "edit1@mail.ru");
-    }
-
-    @AfterEach
-    void tearDown() {
     }
 
     @Test
