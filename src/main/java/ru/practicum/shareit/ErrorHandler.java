@@ -13,7 +13,6 @@ import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.request.RequestController;
 import ru.practicum.shareit.request.exception.RequestNotFoundException;
 import ru.practicum.shareit.user.UserController;
-import ru.practicum.shareit.user.exception.UserEmailExistException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import java.nio.file.AccessDeniedException;
@@ -58,13 +57,6 @@ public class ErrorHandler {
             UserNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(final Exception e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler({
-            UserEmailExistException.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse duplicateIsFound(final Exception e) {
         return new ErrorResponse(e.getMessage());
     }
 

@@ -5,7 +5,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.Constants;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.exception.UserEmailExistException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -31,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto createUser(@Valid @RequestBody UserDto userDto) throws UserEmailExistException {
+    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
         return userService.createUser(userDto);
     }
 
@@ -42,7 +41,7 @@ public class UserController {
 
     @PatchMapping("{userId}")
     public UserDto updateUser(@NotNull @PathVariable Long userId,
-                              @Valid @RequestBody UserDto userDto) throws UserNotFoundException, UserEmailExistException {
+                              @Valid @RequestBody UserDto userDto) throws UserNotFoundException {
         return userService.updateUser(userId, userDto);
     }
 
