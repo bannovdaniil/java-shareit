@@ -21,15 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class UserRepositoryTest {
     private final UserRepository userRepository;
 
-    private User user1;
-    private User user2;
-    private User user3;
-
     @BeforeEach
     void beforeEach() {
-        user1 = userRepository.save(new User(null, "User1", "email1@mail.com"));
-        user2 = userRepository.save(new User(null, "User2", "email2@gmail.com"));
-        user3 = userRepository.save(new User(null, "User3", "email3@hotmail.com"));
+        userRepository.save(new User(null, "User1", "email1@mail.com"));
+        userRepository.save(new User(null, "User2", "email2@gmail.com"));
+        userRepository.save(new User(null, "User3", "email3@hotmail.com"));
     }
 
     @AfterEach

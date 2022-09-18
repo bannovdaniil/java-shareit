@@ -35,9 +35,4 @@ public class Item {
     private Long requestId;
     @OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
-
-    public void addComment(Comment comment) {
-        comment.setItem(this);
-        comments.add(comment);
-    }
 }

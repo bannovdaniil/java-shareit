@@ -70,7 +70,7 @@ class ItemControllerTest {
                 new BookingItemDto(),
                 new ArrayList<>(),
                 1L);
-        commentDto = new CommentDto(1L, "comment", 2L, "User 1", LocalDateTime.now());
+        commentDto = new CommentDto(1L, "comment", "User 1", LocalDateTime.now());
         commentInDto = new CommentInDto("Comment 1");
     }
 

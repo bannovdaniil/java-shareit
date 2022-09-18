@@ -43,7 +43,6 @@ class CommentMapperTest {
         var expected = new CommentDto(
                 1L,
                 "comment1",
-                null,
                 "name",
                 LocalDateTime.parse("2022-05-12T15:33:24", Constants.DATE_TIME_FORMATTER)
         );

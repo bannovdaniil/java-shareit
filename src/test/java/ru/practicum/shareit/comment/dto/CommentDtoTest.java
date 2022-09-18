@@ -22,7 +22,6 @@ class CommentDtoTest {
         var dto = new CommentDto(
                 1L,
                 "Comment 1",
-                1L,
                 "User Name 1",
                 LocalDateTime.now()
         );

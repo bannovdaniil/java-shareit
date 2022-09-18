@@ -144,7 +144,7 @@ public class ItemServiceImpl implements ItemService {
 
     private BookingItemDto getBookingItemDto(BookingOutDto bookingOutDto) {
         return new BookingItemDto(bookingOutDto.getId(), bookingOutDto.getBooker().getId(),
-                bookingOutDto.getStart(), bookingOutDto.getEnd(), bookingOutDto.getStatus());
+                bookingOutDto.getStart(), bookingOutDto.getEnd());
     }
 
     @Override
