@@ -37,13 +37,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
 class BookingControllerTest {
+    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     @Mock
     private BookingService bookingService;
     @InjectMocks
     private BookingController controller;
     @Autowired
     private MockMvc mockMvc;
-    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private BookingInDto bookingInDto;
     private BookingOutDto bookingOutDto;
 

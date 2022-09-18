@@ -37,13 +37,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
 class ItemControllerTest {
+    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     @Mock
     private ItemService itemService;
     @InjectMocks
     private ItemController controller;
     @Autowired
     private MockMvc mockMvc;
-    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private ItemDto itemDto;
     private ItemWithBookingDto itemWithBookingDto;
     private CommentDto commentDto;
@@ -56,7 +56,7 @@ class ItemControllerTest {
                 .build();
         itemDto = new ItemDto(
                 1L,
-                "Sumsung",
+                "Samsung",
                 "mobile phone",
                 true,
                 2L,
