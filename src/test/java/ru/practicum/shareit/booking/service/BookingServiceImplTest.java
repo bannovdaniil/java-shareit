@@ -285,22 +285,22 @@ class BookingServiceImplTest {
         Mockito.when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         switch (state) {
             case ("ALL"):
-                Mockito.when(bookingRepository.findAllByBookerIdOrderByStartDesc(any(), anyLong())).thenReturn(List.of(booking, bookingApproved));
+                Mockito.when(bookingRepository.findAllByBookerId(any(), anyLong())).thenReturn(List.of(booking, bookingApproved));
                 break;
             case ("CURRENT"):
-                Mockito.when(bookingRepository.findAllByBookerByDateIntoPeriodOrderByStartDesc(any(), anyLong(), any())).thenReturn(List.of(booking, bookingApproved));
+                Mockito.when(bookingRepository.findAllByBookerByDateIntoPeriod(any(), anyLong(), any())).thenReturn(List.of(booking, bookingApproved));
                 break;
             case ("PAST"):
-                Mockito.when(bookingRepository.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(any(), anyLong(), any())).thenReturn(List.of(booking, bookingApproved));
+                Mockito.when(bookingRepository.findAllByBookerIdAndEndIsBefore(any(), anyLong(), any())).thenReturn(List.of(booking, bookingApproved));
                 break;
             case ("FUTURE"):
-                Mockito.when(bookingRepository.findAllByBookerIdAndStartIsAfterOrderByStartDesc(any(), anyLong(), any())).thenReturn(List.of(booking, bookingApproved));
+                Mockito.when(bookingRepository.findAllByBookerIdAndStartIsAfter(any(), anyLong(), any())).thenReturn(List.of(booking, bookingApproved));
                 break;
             case ("REJECTED"):
-                Mockito.when(bookingRepository.findAllByBookerAndStatusRejectedOrderByStartDesc(any(), anyLong())).thenReturn(List.of(booking, bookingApproved));
+                Mockito.when(bookingRepository.findAllByBookerAndStatusRejected(any(), anyLong())).thenReturn(List.of(booking, bookingApproved));
                 break;
             case ("WAITING"):
-                Mockito.when(bookingRepository.findAllByBookerAndStatusWaitingOrderByStartDesc(any(), anyLong())).thenReturn(List.of(booking, bookingApproved));
+                Mockito.when(bookingRepository.findAllByBookerAndStatusWaiting(any(), anyLong())).thenReturn(List.of(booking, bookingApproved));
                 break;
             default:
         }
@@ -324,22 +324,22 @@ class BookingServiceImplTest {
         Mockito.when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         switch (state) {
             case ("ALL"):
-                Mockito.when(bookingRepository.findAllByItemOwnerOrderByStartDesc(any(), anyLong())).thenReturn(List.of(booking, bookingApproved));
+                Mockito.when(bookingRepository.findAllByItemOwner(any(), anyLong())).thenReturn(List.of(booking, bookingApproved));
                 break;
             case ("CURRENT"):
-                Mockito.when(bookingRepository.findAllByItemOwnerByDateIntoPeriodOrderByStartDesc(any(), anyLong(), any())).thenReturn(List.of(booking, bookingApproved));
+                Mockito.when(bookingRepository.findAllByItemOwnerByDateIntoPeriod(any(), anyLong(), any())).thenReturn(List.of(booking, bookingApproved));
                 break;
             case ("PAST"):
-                Mockito.when(bookingRepository.findAllByItemOwnerAndEndIsBeforeOrderByStartDesc(any(), anyLong(), any())).thenReturn(List.of(booking, bookingApproved));
+                Mockito.when(bookingRepository.findAllByItemOwnerAndEndIsBefore(any(), anyLong(), any())).thenReturn(List.of(booking, bookingApproved));
                 break;
             case ("FUTURE"):
-                Mockito.when(bookingRepository.findAllByItemOwnerAndStartIsAfterOrderByStartDesc(any(), anyLong(), any())).thenReturn(List.of(booking, bookingApproved));
+                Mockito.when(bookingRepository.findAllByItemOwnerAndStartIsAfter(any(), anyLong(), any())).thenReturn(List.of(booking, bookingApproved));
                 break;
             case ("REJECTED"):
-                Mockito.when(bookingRepository.findAllByItemOwnerAndStateRejectedOrderByStartDesc(any(), anyLong())).thenReturn(List.of(booking, bookingApproved));
+                Mockito.when(bookingRepository.findAllByItemOwnerAndStateRejected(any(), anyLong())).thenReturn(List.of(booking, bookingApproved));
                 break;
             case ("WAITING"):
-                Mockito.when(bookingRepository.findAllByItemOwnerAndStateWaitingOrderByStartDesc(any(), anyLong())).thenReturn(List.of(booking, bookingApproved));
+                Mockito.when(bookingRepository.findAllByItemOwnerAndStateWaiting(any(), anyLong())).thenReturn(List.of(booking, bookingApproved));
                 break;
             default:
         }

@@ -8,15 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.Constants;
 import ru.practicum.shareit.item.model.Item;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@TestPropertySource(properties = {"spring.datasource.url=jdbc:hsqldb:mem:${random.uuid}"})
 @DataJpaTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class ItemRepositoryTest {

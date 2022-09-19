@@ -19,81 +19,74 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b FROM Booking as b " +
             " WHERE b.bookerId = :userId " +
-            " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.REJECTED " +
-            " ORDER BY b.start DESC ")
-    List<Booking> findAllByBookerAndStatusRejectedOrderByStartDesc(Pageable pageable, Long userId);
+            " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.REJECTED ")
+    List<Booking> findAllByBookerAndStatusRejected(Pageable pageable, Long userId);
 
     @Query("SELECT b FROM Booking as b " +
             " WHERE b.bookerId = :userId " +
-            " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.WAITING " +
-            " ORDER BY b.start DESC ")
-    List<Booking> findAllByBookerAndStatusWaitingOrderByStartDesc(Pageable pageable, Long userId);
+            " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.WAITING ")
+    List<Booking> findAllByBookerAndStatusWaiting(Pageable pageable, Long userId);
 
     @Query("SELECT b FROM Booking as b " +
             " WHERE b.bookerId = :userId" +
             " AND b.start <= :dateTime " +
             " AND b.end >= :dateTime ")
-    List<Booking> findAllByBookerByDateIntoPeriodOrderByStartDesc(Pageable pageable, Long userId, LocalDateTime dateTime);
+    List<Booking> findAllByBookerByDateIntoPeriod(Pageable pageable, Long userId, LocalDateTime dateTime);
 
-    List<Booking> findAllByBookerIdAndStartIsAfterOrderByStartDesc(Pageable pageable, Long userId, LocalDateTime dateTime);
+    List<Booking> findAllByBookerIdAndStartIsAfter(Pageable pageable, Long userId, LocalDateTime dateTime);
 
-    List<Booking> findAllByBookerIdAndEndIsBeforeOrderByStartDesc(Pageable pageable, Long userId, LocalDateTime dateTime);
+    List<Booking> findAllByBookerIdAndEndIsBefore(Pageable pageable, Long userId, LocalDateTime dateTime);
 
-    List<Booking> findAllByBookerIdOrderByStartDesc(Pageable pageable, Long userId);
+    List<Booking> findAllByBookerId(Pageable pageable, Long userId);
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
             " WHERE i.id = :itemId " +
             " AND b.bookerId = :userId " +
             " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.APPROVED " +
-            " AND b.end < :dateTime " +
-            " ORDER BY b.start DESC "
+            " AND b.end < :dateTime "
     )
     List<Booking> findAllByItemUserIdAndItemIdOrderByStartDesc(Pageable pageable, Long userId, Long itemId, LocalDateTime dateTime);
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
-            " WHERE i.ownerId = :ownerId " +
-            " ORDER BY b.start DESC "
+            " WHERE i.ownerId = :ownerId "
     )
-    List<Booking> findAllByItemOwnerOrderByStartDesc(Pageable pageable, Long ownerId);
+    List<Booking> findAllByItemOwner(Pageable pageable, Long ownerId);
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
             " WHERE i.ownerId = :ownerId " +
-            " AND b.start >= :dateTime " +
-            " ORDER BY b.start DESC "
+            " AND b.start >= :dateTime "
     )
-    List<Booking> findAllByItemOwnerAndStartIsAfterOrderByStartDesc(Pageable pageable, Long ownerId, LocalDateTime dateTime);
+    List<Booking> findAllByItemOwnerAndStartIsAfter(Pageable pageable, Long ownerId, LocalDateTime dateTime);
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
             " WHERE i.ownerId = :ownerId " +
-            " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.REJECTED " +
-            " ORDER BY b.start DESC "
+            " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.REJECTED "
     )
-    List<Booking> findAllByItemOwnerAndStateRejectedOrderByStartDesc(Pageable pageable, Long ownerId);
+    List<Booking> findAllByItemOwnerAndStateRejected(Pageable pageable, Long ownerId);
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
             " WHERE i.ownerId = :ownerId " +
-            " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.WAITING " +
-            " ORDER BY b.start DESC "
+            " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.WAITING "
     )
-    List<Booking> findAllByItemOwnerAndStateWaitingOrderByStartDesc(Pageable pageable, Long ownerId);
+    List<Booking> findAllByItemOwnerAndStateWaiting(Pageable pageable, Long ownerId);
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
             " WHERE i.ownerId = :ownerId" +
             " AND b.start <= :dateTime " +
             " AND b.end >= :dateTime ")
-    List<Booking> findAllByItemOwnerByDateIntoPeriodOrderByStartDesc(Pageable pageable, Long ownerId, LocalDateTime dateTime);
+    List<Booking> findAllByItemOwnerByDateIntoPeriod(Pageable pageable, Long ownerId, LocalDateTime dateTime);
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +
             " WHERE i.ownerId = :ownerId" +
             " AND b.end < :dateTime ")
-    List<Booking> findAllByItemOwnerAndEndIsBeforeOrderByStartDesc(Pageable pageable, Long ownerId, LocalDateTime dateTime);
+    List<Booking> findAllByItemOwnerAndEndIsBefore(Pageable pageable, Long ownerId, LocalDateTime dateTime);
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +

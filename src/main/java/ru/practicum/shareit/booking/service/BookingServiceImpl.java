@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingInDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
@@ -107,25 +108,26 @@ public class BookingServiceImpl implements BookingService {
         checkStateValue(state);
         userService.checkUserExist(userId);
         List<Booking> bookingList = new ArrayList<>();
-        Pageable pageable = PageRequest.of(from / size, size);
+        Sort sort = Sort.sort(Booking.class).by(Booking::getStart).descending();
+        Pageable pageable = PageRequest.of(from / size, size, sort);
         switch (state) {
             case ("ALL"):
-                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(pageable, userId);
+                bookingList = bookingRepository.findAllByBookerId(pageable, userId);
                 break;
             case ("CURRENT"):
-                bookingList = bookingRepository.findAllByBookerByDateIntoPeriodOrderByStartDesc(pageable, userId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByBookerByDateIntoPeriod(pageable, userId, LocalDateTime.now());
                 break;
             case ("PAST"):
-                bookingList = bookingRepository.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(pageable, userId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByBookerIdAndEndIsBefore(pageable, userId, LocalDateTime.now());
                 break;
             case ("FUTURE"):
-                bookingList = bookingRepository.findAllByBookerIdAndStartIsAfterOrderByStartDesc(pageable, userId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByBookerIdAndStartIsAfter(pageable, userId, LocalDateTime.now());
                 break;
             case ("REJECTED"):
-                bookingList = bookingRepository.findAllByBookerAndStatusRejectedOrderByStartDesc(pageable, userId);
+                bookingList = bookingRepository.findAllByBookerAndStatusRejected(pageable, userId);
                 break;
             case ("WAITING"):
-                bookingList = bookingRepository.findAllByBookerAndStatusWaitingOrderByStartDesc(pageable, userId);
+                bookingList = bookingRepository.findAllByBookerAndStatusWaiting(pageable, userId);
                 break;
             default:
         }
@@ -144,25 +146,26 @@ public class BookingServiceImpl implements BookingService {
         checkStateValue(state);
         userService.checkUserExist(ownerId);
         List<Booking> bookingList = new ArrayList<>();
-        Pageable pageable = PageRequest.of(from / size, size);
+        Sort sort = Sort.sort(Booking.class).by(Booking::getStart).descending();
+        Pageable pageable = PageRequest.of(from / size, size, sort);
         switch (state) {
             case ("ALL"):
-                bookingList = bookingRepository.findAllByItemOwnerOrderByStartDesc(pageable, ownerId);
+                bookingList = bookingRepository.findAllByItemOwner(pageable, ownerId);
                 break;
             case ("CURRENT"):
-                bookingList = bookingRepository.findAllByItemOwnerByDateIntoPeriodOrderByStartDesc(pageable, ownerId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByItemOwnerByDateIntoPeriod(pageable, ownerId, LocalDateTime.now());
                 break;
             case ("PAST"):
-                bookingList = bookingRepository.findAllByItemOwnerAndEndIsBeforeOrderByStartDesc(pageable, ownerId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByItemOwnerAndEndIsBefore(pageable, ownerId, LocalDateTime.now());
                 break;
             case ("FUTURE"):
-                bookingList = bookingRepository.findAllByItemOwnerAndStartIsAfterOrderByStartDesc(pageable, ownerId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByItemOwnerAndStartIsAfter(pageable, ownerId, LocalDateTime.now());
                 break;
             case ("REJECTED"):
-                bookingList = bookingRepository.findAllByItemOwnerAndStateRejectedOrderByStartDesc(pageable, ownerId);
+                bookingList = bookingRepository.findAllByItemOwnerAndStateRejected(pageable, ownerId);
                 break;
             case ("WAITING"):
-                bookingList = bookingRepository.findAllByItemOwnerAndStateWaitingOrderByStartDesc(pageable, ownerId);
+                bookingList = bookingRepository.findAllByItemOwnerAndStateWaiting(pageable, ownerId);
                 break;
             default:
         }

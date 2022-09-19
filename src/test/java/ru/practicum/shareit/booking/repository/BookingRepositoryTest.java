@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -104,12 +103,6 @@ class BookingRepositoryTest {
         itemRepository.flush();
     }
 
-    @AfterEach
-    void tearDown() {
-        bookingRepository.deleteAll();
-        itemRepository.deleteAll();
-    }
-
     @ParameterizedTest
     @CsvSource({
             "4, 3, true, 'bookingId and Item ownerId'",
@@ -130,7 +123,7 @@ class BookingRepositoryTest {
             "4, 0, 'Non'",
     })
     void findAllByBookerAndStatusRejectedOrderByStartDesc(Long userId, int expectedSize) {
-        var bookingList = bookingRepository.findAllByBookerAndStatusRejectedOrderByStartDesc(pageable, userId);
+        var bookingList = bookingRepository.findAllByBookerAndStatusRejected(pageable, userId);
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
@@ -142,7 +135,7 @@ class BookingRepositoryTest {
             "4, 1, 'booking4'",
     })
     void findAllByBookerAndStatusWaitingOrderByStartDesc(Long userId, int expectedSize) {
-        var bookingList = bookingRepository.findAllByBookerAndStatusWaitingOrderByStartDesc(pageable, userId);
+        var bookingList = bookingRepository.findAllByBookerAndStatusWaiting(pageable, userId);
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
@@ -155,7 +148,7 @@ class BookingRepositoryTest {
     })
     void findAllByBookerByDateIntoPeriodOrderByStartDesc(Long userId, int day, int expectedSize) {
         var expectedPeriod = LocalDateTime.now().plusDays(day);
-        var bookingList = bookingRepository.findAllByBookerByDateIntoPeriodOrderByStartDesc(pageable, userId, expectedPeriod);
+        var bookingList = bookingRepository.findAllByBookerByDateIntoPeriod(pageable, userId, expectedPeriod);
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
@@ -168,7 +161,7 @@ class BookingRepositoryTest {
     })
     void findAllByBookerIdAndStartIsAfterOrderByStartDesc(Long userId, int day, int expectedSize) {
         var expectedPeriod = LocalDateTime.now().plusDays(day);
-        var bookingList = bookingRepository.findAllByBookerIdAndStartIsAfterOrderByStartDesc(pageable, userId, expectedPeriod);
+        var bookingList = bookingRepository.findAllByBookerIdAndStartIsAfter(pageable, userId, expectedPeriod);
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
@@ -181,7 +174,7 @@ class BookingRepositoryTest {
     })
     void findAllByBookerIdAndEndIsBeforeOrderByStartDesc(Long userId, int day, int expectedSize) {
         var expectedPeriod = LocalDateTime.now().plusDays(day);
-        var bookingList = bookingRepository.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(pageable, userId, expectedPeriod);
+        var bookingList = bookingRepository.findAllByBookerIdAndEndIsBefore(pageable, userId, expectedPeriod);
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
@@ -193,7 +186,7 @@ class BookingRepositoryTest {
             "4, 1, 'booking4'",
     })
     void findAllByBookerIdOrderByStartDesc(Long userId, int expectedSize) {
-        var bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(pageable, userId);
+        var bookingList = bookingRepository.findAllByBookerId(pageable, userId);
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
@@ -216,7 +209,7 @@ class BookingRepositoryTest {
             "3, 3, 'item2 -> {booking3, booking4, booking6}'",
     })
     void findAllByItemOwnerOrderByStartDesc(Long ownerId, int expectedSize) {
-        var bookingList = bookingRepository.findAllByItemOwnerOrderByStartDesc(pageable, ownerId);
+        var bookingList = bookingRepository.findAllByItemOwner(pageable, ownerId);
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
@@ -229,7 +222,7 @@ class BookingRepositoryTest {
     })
     void findAllByItemOwnerAndStartIsAfterOrderByStartDesc(Long userId, int day, int expectedSize) {
         var expectedPeriod = LocalDateTime.now().plusDays(day);
-        var bookingList = bookingRepository.findAllByItemOwnerAndStartIsAfterOrderByStartDesc(pageable, userId, expectedPeriod);
+        var bookingList = bookingRepository.findAllByItemOwnerAndStartIsAfter(pageable, userId, expectedPeriod);
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
@@ -240,7 +233,7 @@ class BookingRepositoryTest {
             "3, 0, 'item2 -> {booking3, booking4, booking6}'",
     })
     void findAllByItemOwnerAndStateRejectedOrderByStartDesc(Long ownerId, int expectedSize) {
-        var bookingList = bookingRepository.findAllByItemOwnerAndStateRejectedOrderByStartDesc(pageable, ownerId);
+        var bookingList = bookingRepository.findAllByItemOwnerAndStateRejected(pageable, ownerId);
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
@@ -251,7 +244,7 @@ class BookingRepositoryTest {
             "3, 2, 'item2 -> {booking3, booking4}'",
     })
     void findAllByItemOwnerAndStateWaitingOrderByStartDesc(Long ownerId, int expectedSize) {
-        var bookingList = bookingRepository.findAllByItemOwnerAndStateWaitingOrderByStartDesc(pageable, ownerId);
+        var bookingList = bookingRepository.findAllByItemOwnerAndStateWaiting(pageable, ownerId);
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
@@ -264,7 +257,7 @@ class BookingRepositoryTest {
     })
     void findAllByItemOwnerByDateIntoPeriodOrderByStartDesc(Long userId, int day, int expectedSize) {
         var expectedPeriod = LocalDateTime.now().plusDays(day);
-        var bookingList = bookingRepository.findAllByItemOwnerByDateIntoPeriodOrderByStartDesc(pageable, userId, expectedPeriod);
+        var bookingList = bookingRepository.findAllByItemOwnerByDateIntoPeriod(pageable, userId, expectedPeriod);
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
@@ -277,7 +270,7 @@ class BookingRepositoryTest {
     })
     void findAllByItemOwnerAndEndIsBeforeOrderByStartDesc(Long userId, int day, int expectedSize) {
         var expectedPeriod = LocalDateTime.now().plusDays(day);
-        var bookingList = bookingRepository.findAllByItemOwnerAndEndIsBeforeOrderByStartDesc(pageable, userId, expectedPeriod);
+        var bookingList = bookingRepository.findAllByItemOwnerAndEndIsBefore(pageable, userId, expectedPeriod);
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 
