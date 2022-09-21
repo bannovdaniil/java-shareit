@@ -1,6 +1,9 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingInDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
@@ -100,29 +103,31 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingOutDto> findAllBookingByUserAndState(Long userId, String state)
+    public List<BookingOutDto> findAllBookingByUserAndState(Long userId, String state, Integer from, Integer size)
             throws UserNotFoundException, ItemNotFoundException, BookingErrorException {
         checkStateValue(state);
         userService.checkUserExist(userId);
         List<Booking> bookingList = new ArrayList<>();
+        Sort sort = Sort.sort(Booking.class).by(Booking::getStart).descending();
+        Pageable pageable = PageRequest.of(from / size, size, sort);
         switch (state) {
             case ("ALL"):
-                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
+                bookingList = bookingRepository.findAllByBookerId(pageable, userId);
                 break;
             case ("CURRENT"):
-                bookingList = bookingRepository.findAllByBookerByDateIntoPeriodOrderByStartDesc(userId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByBookerByDateIntoPeriod(pageable, userId, LocalDateTime.now());
                 break;
             case ("PAST"):
-                bookingList = bookingRepository.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByBookerIdAndEndIsBefore(pageable, userId, LocalDateTime.now());
                 break;
             case ("FUTURE"):
-                bookingList = bookingRepository.findAllByBookerIdAndStartIsAfterOrderByStartDesc(userId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByBookerIdAndStartIsAfter(pageable, userId, LocalDateTime.now());
                 break;
             case ("REJECTED"):
-                bookingList = bookingRepository.findAllByBookerAndStatusRejectedOrderByStartDesc(userId);
+                bookingList = bookingRepository.findAllByBookerAndStatusRejected(pageable, userId);
                 break;
             case ("WAITING"):
-                bookingList = bookingRepository.findAllByBookerAndStatusWaitingOrderByStartDesc(userId);
+                bookingList = bookingRepository.findAllByBookerAndStatusWaiting(pageable, userId);
                 break;
             default:
         }
@@ -137,28 +142,30 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingOutDto> findAllBookingByOwnerAndState(Long ownerId, String state) throws BookingErrorException, UserNotFoundException, ItemNotFoundException {
+    public List<BookingOutDto> findAllBookingByOwnerAndState(Long ownerId, String state, Integer from, Integer size) throws BookingErrorException, UserNotFoundException, ItemNotFoundException {
         checkStateValue(state);
         userService.checkUserExist(ownerId);
         List<Booking> bookingList = new ArrayList<>();
+        Sort sort = Sort.sort(Booking.class).by(Booking::getStart).descending();
+        Pageable pageable = PageRequest.of(from / size, size, sort);
         switch (state) {
             case ("ALL"):
-                bookingList = bookingRepository.findAllByItemOwnerOrderByStartDesc(ownerId);
+                bookingList = bookingRepository.findAllByItemOwner(pageable, ownerId);
                 break;
             case ("CURRENT"):
-                bookingList = bookingRepository.findAllByItemOwnerByDateIntoPeriodOrderByStartDesc(ownerId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByItemOwnerByDateIntoPeriod(pageable, ownerId, LocalDateTime.now());
                 break;
             case ("PAST"):
-                bookingList = bookingRepository.findAllByItemOwnerAndEndIsBeforeOrderByStartDesc(ownerId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByItemOwnerAndEndIsBefore(pageable, ownerId, LocalDateTime.now());
                 break;
             case ("FUTURE"):
-                bookingList = bookingRepository.findAllByItemOwnerAndStartIsAfterOrderByStartDesc(ownerId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByItemOwnerAndStartIsAfter(pageable, ownerId, LocalDateTime.now());
                 break;
             case ("REJECTED"):
-                bookingList = bookingRepository.findAllByItemOwnerAndStateRejectedOrderByStartDesc(ownerId);
+                bookingList = bookingRepository.findAllByItemOwnerAndStateRejected(pageable, ownerId);
                 break;
             case ("WAITING"):
-                bookingList = bookingRepository.findAllByItemOwnerAndStateWaitingOrderByStartDesc(ownerId);
+                bookingList = bookingRepository.findAllByItemOwnerAndStateWaiting(pageable, ownerId);
                 break;
             default:
         }
@@ -166,14 +173,14 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingOutDto> findAllBookingByOwnerIdAndItemId(Long ownerId, Long itemId)
+    public List<BookingOutDto> findAllBookingByOwnerIdAndItemId(Pageable pageable, Long ownerId, Long itemId)
             throws UserNotFoundException, ItemNotFoundException {
-        return bookingListToOutDtoList(bookingRepository.findAllByItemOwnerAndItemIdOrderByStartAsc(ownerId, itemId));
+        return bookingListToOutDtoList(bookingRepository.findAllByItemOwnerAndItemIdOrderByStartAsc(pageable, ownerId, itemId));
     }
 
     @Override
-    public List<Booking> findAllBookingByUserIdAndItemId(Long userId, Long itemId, LocalDateTime dateTime) {
-        return bookingRepository.findAllByItemUserIdAndItemIdOrderByStartDesc(userId, itemId, dateTime);
+    public List<Booking> findAllBookingByUserIdAndItemId(Pageable pageable, Long userId, Long itemId, LocalDateTime dateTime) {
+        return bookingRepository.findAllByItemUserIdAndItemIdOrderByStartDesc(pageable, userId, itemId, dateTime);
     }
 
     private List<BookingOutDto> bookingListToOutDtoList(List<Booking> bookingList)

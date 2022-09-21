@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.Constants;
 import ru.practicum.shareit.booking.exception.BookingErrorException;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.dto.CommentInDto;
@@ -14,6 +15,8 @@ import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 
@@ -25,9 +28,13 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<ItemWithBookingDto> findAllItemsByUserId(@NotNull @RequestHeader(name = "X-Sharer-User-Id") Long userId)
+    public List<ItemWithBookingDto> findAllItemsByUserId(@NotNull @RequestHeader(name = "X-Sharer-User-Id") Long userId,
+                                                         @PositiveOrZero
+                                                         @RequestParam(defaultValue = "0") Integer from,
+                                                         @Positive
+                                                         @RequestParam(defaultValue = Constants.PAGE_SIZE_STRING) Integer size)
             throws UserNotFoundException, BookingErrorException, ItemNotFoundException {
-        return itemService.findAllByUserId(userId);
+        return itemService.findAllByUserId(userId, from, size);
     }
 
     @PostMapping
@@ -55,8 +62,12 @@ public class ItemController {
     }
 
     @GetMapping("search")
-    public List<ItemDto> findItemsByQueryText(@RequestParam(name = "text", defaultValue = "") String queryText) {
-        return itemService.findItemsByQueryText(queryText);
+    public List<ItemDto> findItemsByQueryText(@RequestParam(name = "text", defaultValue = "") String queryText,
+                                              @PositiveOrZero
+                                              @RequestParam(defaultValue = "0") Integer from,
+                                              @Positive
+                                              @RequestParam(defaultValue = Constants.PAGE_SIZE_STRING) Integer size) {
+        return itemService.findItemsByQueryText(queryText, from, size);
     }
 
     @PostMapping("{itemId}/comment")
@@ -65,8 +76,7 @@ public class ItemController {
                                        @Valid @RequestBody CommentInDto commentInDto)
             throws
             UserNotFoundException,
-            ItemNotFoundException,
-            AccessDeniedException {
+            ItemNotFoundException {
         return itemService.addCommentToItem(userId, itemId, commentInDto);
     }
 }

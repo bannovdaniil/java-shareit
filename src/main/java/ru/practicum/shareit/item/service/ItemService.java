@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.service;
 
-import ru.practicum.shareit.booking.exception.BookingErrorException;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.dto.CommentInDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -21,11 +20,11 @@ public interface ItemService {
 
     Item findFullItemById(Long itemId) throws ItemNotFoundException;
 
-    List<ItemWithBookingDto> findAllByUserId(Long userId) throws UserNotFoundException, BookingErrorException, ItemNotFoundException;
+    List<ItemWithBookingDto> findAllByUserId(Long userId, Integer from, Integer size) throws UserNotFoundException, ItemNotFoundException;
 
-    List<ItemDto> findItemsByQueryText(String queryText);
+    List<ItemDto> findItemsByQueryText(String queryText, Integer from, Integer size);
 
-    ItemWithBookingDto findItemWithBookingById(Long userId, Long itemId) throws ItemNotFoundException, UserNotFoundException, BookingErrorException;
+    ItemWithBookingDto findItemWithBookingById(Long userId, Long itemId) throws ItemNotFoundException, UserNotFoundException;
 
     CommentDto addCommentToItem(Long userId, Long itemId, CommentInDto commentInDto) throws UserNotFoundException, ItemNotFoundException;
 }

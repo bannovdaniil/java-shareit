@@ -10,8 +10,9 @@ import ru.practicum.shareit.booking.exception.BookingErrorException;
 import ru.practicum.shareit.booking.exception.BookingNotFoundException;
 import ru.practicum.shareit.item.ItemController;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
+import ru.practicum.shareit.request.RequestController;
+import ru.practicum.shareit.request.exception.RequestNotFoundException;
 import ru.practicum.shareit.user.UserController;
-import ru.practicum.shareit.user.exception.UserEmailExistException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import java.nio.file.AccessDeniedException;
@@ -20,6 +21,7 @@ import java.security.InvalidParameterException;
 @RestControllerAdvice(assignableTypes = {
         UserController.class,
         BookingController.class,
+        RequestController.class,
         ItemController.class})
 public class ErrorHandler {
     private ErrorResponse errorResponse;
@@ -51,16 +53,10 @@ public class ErrorHandler {
     @ExceptionHandler({
             ItemNotFoundException.class,
             BookingNotFoundException.class,
+            RequestNotFoundException.class,
             UserNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(final Exception e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler({
-            UserEmailExistException.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse duplicateIsFound(final Exception e) {
         return new ErrorResponse(e.getMessage());
     }
 
