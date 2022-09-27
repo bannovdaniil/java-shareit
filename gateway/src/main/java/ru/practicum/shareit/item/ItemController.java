@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import javax.validation.constraints.PositiveOrZero;
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
+@Slf4j
 @Validated
 public class ItemController {
     private final ItemClient itemClient;
@@ -31,6 +33,7 @@ public class ItemController {
                                                        @Positive
                                                        @RequestParam(defaultValue = Constants.PAGE_SIZE_STRING)
                                                        Integer size) {
+        log.info("0.findAllByUserId in gateway userId={}, from={}, size={}", userId, from, size);
         return itemClient.findAllByUserId(userId, from, size);
     }
 

@@ -354,10 +354,10 @@ class BookingServiceImplTest {
     void findAllBookingByOwnerIdAndItemId() throws UserNotFoundException, ItemNotFoundException {
         Mockito.when(userRepository.findById(anyLong())).thenReturn(Optional.of(user1));
         Mockito.when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
-        Mockito.when(bookingRepository.findAllByItemOwnerAndItemIdOrderByStartAsc(any(), anyLong(), anyLong()))
+        Mockito.when(bookingRepository.findAllByItemOwnerAndItemId(anyLong(), anyLong()))
                 .thenReturn(List.of(booking, bookingApproved));
 
-        var result = bookingService.findAllBookingByOwnerIdAndItemId(pageable, 1L, 2L);
+        var result = bookingService.findAllBookingByOwnerIdAndItemId(1L, 2L);
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(2, result.size());

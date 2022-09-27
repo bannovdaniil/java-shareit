@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.Constants;
@@ -22,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
+@Slf4j
 @Validated
 public class ItemController {
     private final ItemService itemService;
@@ -33,6 +35,7 @@ public class ItemController {
                                                          @Positive
                                                          @RequestParam(defaultValue = Constants.PAGE_SIZE_STRING) Integer size)
             throws UserNotFoundException, ItemNotFoundException {
+        log.info("0.findAllByUserId in controller userId={}, from={}, size={}", userId, from, size);
         return itemService.findAllByUserId(userId, from, size);
     }
 

@@ -1,9 +1,11 @@
 package ru.practicum.shareit.item.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.Constants;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final ItemRepository itemRepository;
@@ -115,9 +118,8 @@ public class ItemServiceImpl implements ItemService {
         Item item = findFullItemById(itemId);
         ItemWithBookingDto itemWithBookingDto = itemWithBookingMapper.itemToDto(item);
         if (userId.equals(item.getOwnerId())) {
-            Pageable pageable = PageRequest.of(0, Constants.PAGE_SIZE_NUM);
             List<BookingOutDto> bookingOutDtoList
-                    = bookingService.findAllBookingByOwnerIdAndItemId(pageable, itemWithBookingDto.getOwner(), itemId);
+                    = bookingService.findAllBookingByOwnerIdAndItemId(itemWithBookingDto.getOwner(), itemId);
             if (bookingOutDtoList.size() > 0) {
                 itemWithBookingDto.setLastBooking(getBookingItemDto(bookingOutDtoList.get(0)));
             }
@@ -161,12 +163,17 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemWithBookingDto> findAllByUserId(Long userId, Integer from, Integer size) throws UserNotFoundException, ItemNotFoundException {
         userService.checkUserExist(userId);
-        Pageable pageable = PageRequest.of(from / size, size);
+        log.info("1.findAllByUserId in class userId={}, from={}, size={}", userId, from, size);
+        Sort sort = Sort.sort(Item.class).by(Item::getId).ascending();
+        Pageable pageable = PageRequest.of(from / size, size, sort);
         List<Item> itemList = itemRepository.findAllByOwnerId(pageable, userId);
+        log.info("2. list={}", itemList);
         List<ItemWithBookingDto> itemWithBookingDtoList = new ArrayList<>();
         for (Item item : itemList) {
+            log.info("3. item={}", item);
             itemWithBookingDtoList.add(findItemWithBookingById(userId, item.getId()));
         }
+        log.info("4. list={}", itemWithBookingDtoList);
         return itemWithBookingDtoList;
     }
 

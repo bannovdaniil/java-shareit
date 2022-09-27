@@ -23,7 +23,7 @@ public interface BookingService {
 
     List<BookingOutDto> findAllBookingByOwnerAndState(Long ownerId, String state, Integer from, Integer size) throws BookingErrorException, UserNotFoundException, ItemNotFoundException;
 
-    List<BookingOutDto> findAllBookingByOwnerIdAndItemId(Pageable pageable, Long owner, Long itemId) throws UserNotFoundException, ItemNotFoundException;
+    List<BookingOutDto> findAllBookingByOwnerIdAndItemId(Long owner, Long itemId) throws UserNotFoundException, ItemNotFoundException;
 
     List<Booking> findAllBookingByUserIdAndItemId(Pageable pageable, Long userId, Long itemId, LocalDateTime dateTime);
 }

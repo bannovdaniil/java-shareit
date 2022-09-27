@@ -281,7 +281,7 @@ class BookingRepositoryTest {
             "3, 2, 3, 'item2 -> {booking3, booking4, booking6}'",
     })
     void findAllByItemOwnerAndItemIdOrderByStartAsc(Long userId, Long itemId, int expectedSize) {
-        var bookingList = bookingRepository.findAllByItemOwnerAndItemIdOrderByStartAsc(pageable, userId, itemId);
+        var bookingList = bookingRepository.findAllByItemOwnerAndItemId(userId, itemId);
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 }

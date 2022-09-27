@@ -92,7 +92,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             " JOIN Item as i ON b.itemId = i.id" +
             " WHERE i.ownerId = :ownerId " +
             " AND i.id = :itemId " +
-            " ORDER BY b.start ASC "
+            " AND b.start IS NOT NULL " +
+            " ORDER BY i.id ASC "
     )
-    List<Booking> findAllByItemOwnerAndItemIdOrderByStartAsc(Pageable pageable, Long ownerId, Long itemId);
+    List<Booking> findAllByItemOwnerAndItemId(Long ownerId, Long itemId);
 }
