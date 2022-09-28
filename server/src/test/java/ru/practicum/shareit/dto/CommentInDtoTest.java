@@ -1,4 +1,4 @@
-package shareit.comment.dto;
+package ru.practicum.shareit.dto;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

@@ -1,42 +1,45 @@
-package shareit.comment.dto;
+package ru.practicum.shareit.dto;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import ru.practicum.shareit.Constants;
-import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.request.dto.RequestDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @JsonTest
-class CommentDtoTest {
+class RequestDtoTest {
     private final DateTimeFormatter dtf = Constants.DATE_TIME_FORMATTER;
     @Autowired
-    private JacksonTester<CommentDto> json;
+    private JacksonTester<RequestDto> json;
 
     @Test
     void testSerialize() throws Exception {
-        var dto = new CommentDto(
+        var dto = new RequestDto(
                 1L,
-                "Comment 1",
-                "User Name 1",
-                LocalDateTime.now()
+                "Request description",
+                2L,
+                LocalDateTime.now(),
+                new ArrayList<>()
         );
 
         var result = json.write(dto);
-
         assertThat(result).hasJsonPath("$.id");
-        assertThat(result).hasJsonPath("$.text");
-        assertThat(result).hasJsonPath("$.authorName");
+        assertThat(result).hasJsonPath("$.description");
+        assertThat(result).hasJsonPath("$.requestorId");
         assertThat(result).hasJsonPath("$.created");
+        assertThat(result).hasJsonPath("$.items");
 
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(dto.getId().intValue());
-        assertThat(result).extractingJsonPathStringValue("$.text").isEqualTo(dto.getText());
-        assertThat(result).extractingJsonPathStringValue("$.authorName").isEqualTo(dto.getAuthorName());
+        assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo(dto.getDescription());
+        assertThat(result).extractingJsonPathNumberValue("$.requestorId").isEqualTo(dto.getRequestorId().intValue());
         assertThat(result).extractingJsonPathStringValue("$.created").startsWith(dto.getCreated().format(dtf));
+        assertThat(result).extractingJsonPathArrayValue("$.items").hasSize(0);
     }
 }

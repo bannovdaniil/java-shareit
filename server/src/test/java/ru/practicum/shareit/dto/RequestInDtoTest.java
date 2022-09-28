@@ -1,4 +1,4 @@
-package shareit.request.dto;
+package ru.practicum.shareit.dto;
 
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Assertions;
