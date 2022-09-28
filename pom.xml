@@ -124,6 +124,12 @@
                             <configuration>
                                 <rules>
                                     <rule>
+                                        <element>CLASS</element>
+                                        <excludes>
+                                            <exclude>ru.practicum.shareit.ErrorHandler.ErrorResponse</exclude>
+                                            <exclude>ru.practicum.shareit.ErrorHandler</exclude>
+                                            <exclude>*ErrorHandler</exclude>
+                                        </excludes>
                                         <element>BUNDLE</element>
                                         <limits>
                                             <limit>
@@ -154,7 +160,7 @@
                                             <limit>
                                                 <counter>CLASS</counter>
                                                 <value>MISSEDCOUNT</value>
-                                                <maximum>1</maximum>
+                                                <maximum>2</maximum>
                                             </limit>
                                         </limits>
                                     </rule>
