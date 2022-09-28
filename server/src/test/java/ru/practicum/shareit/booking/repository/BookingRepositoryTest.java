@@ -198,7 +198,7 @@ class BookingRepositoryTest {
     })
     void findAllByItemUserIdAndItemIdOrderByStartDesc(Long userId, Long itemId, int day, int expectedSize) {
         var expectedPeriod = LocalDateTime.now().plusDays(day);
-        var bookingList = bookingRepository.findAllByItemUserIdAndItemIdOrderByStartDesc(pageable, userId, itemId, expectedPeriod);
+        var bookingList = bookingRepository.findAllByItemUserIdAndItemIdOrderByStartDesc(userId, itemId, expectedPeriod);
         assertThat(expectedSize).isEqualTo(bookingList.size());
     }
 

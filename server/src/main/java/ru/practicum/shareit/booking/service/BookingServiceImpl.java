@@ -179,8 +179,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> findAllBookingByUserIdAndItemId(Pageable pageable, Long userId, Long itemId, LocalDateTime dateTime) {
-        return bookingRepository.findAllByItemUserIdAndItemIdOrderByStartDesc(pageable, userId, itemId, dateTime);
+    public List<Booking> findAllBookingByUserIdAndItemId(Long userId, Long itemId, LocalDateTime dateTime) {
+        return bookingRepository.findAllByItemUserIdAndItemIdOrderByStartDesc(userId, itemId, dateTime);
     }
 
     private List<BookingOutDto> bookingListToOutDtoList(List<Booking> bookingList)

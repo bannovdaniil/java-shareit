@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.Constants;
 import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -135,8 +134,15 @@ public class ItemServiceImpl implements ItemService {
     public CommentDto addCommentToItem(Long userId, Long itemId, CommentInDto commentInDto) throws UserNotFoundException, ItemNotFoundException {
         User user = userService.findFullUserById(userId);
         Item item = findFullItemById(itemId);
-        Pageable pageable = PageRequest.of(0, Constants.PAGE_SIZE_NUM);
-        List<Booking> bookingList = bookingService.findAllBookingByUserIdAndItemId(pageable, userId, itemId, LocalDateTime.now());
+        LocalDateTime dd = LocalDateTime.now();
+        List<Booking> bookingList = bookingService.findAllBookingByUserIdAndItemId(userId, itemId, dd);
+        log.info("addCommentToItem userId={}, itemId={}, Comment={}, size:{}, list:{}", userId, itemId, commentInDto, bookingList.size(), bookingList);
+        log.info("SELECT b FROM Booking as b  " +
+                "             JOIN Item as i ON b.itemId = i.id " +
+                "             WHERE i.id = {}  " +
+                "             AND b.bookerId = {}  " +
+                "             AND b.status = APPROVED  " +
+                "             AND b.end < {} ", itemId, userId, dd);
         if (bookingList.size() == 0) {
             throw new InvalidParameterException("Can't select any booking.");
         }
@@ -163,17 +169,13 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemWithBookingDto> findAllByUserId(Long userId, Integer from, Integer size) throws UserNotFoundException, ItemNotFoundException {
         userService.checkUserExist(userId);
-        log.info("1.findAllByUserId in class userId={}, from={}, size={}", userId, from, size);
         Sort sort = Sort.sort(Item.class).by(Item::getId).ascending();
         Pageable pageable = PageRequest.of(from / size, size, sort);
         List<Item> itemList = itemRepository.findAllByOwnerId(pageable, userId);
-        log.info("2. list={}", itemList);
         List<ItemWithBookingDto> itemWithBookingDtoList = new ArrayList<>();
         for (Item item : itemList) {
-            log.info("3. item={}", item);
             itemWithBookingDtoList.add(findItemWithBookingById(userId, item.getId()));
         }
-        log.info("4. list={}", itemWithBookingDtoList);
         return itemWithBookingDtoList;
     }
 

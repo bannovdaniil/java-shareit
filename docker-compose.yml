@@ -41,6 +41,7 @@ services:
       db:
         condition: service_healthy
     environment:
+      - TZ=Europe/Moscow
       - WAIT_HOSTS= postgresdb:5432
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresdb:5432/shareit
       - POSTGRES_USER=shareit

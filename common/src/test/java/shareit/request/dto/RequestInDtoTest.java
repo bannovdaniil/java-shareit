@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.dto;
+package shareit.request.dto;
 
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Assertions;
@@ -9,6 +9,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
+import ru.practicum.shareit.comment.dto.CommentInDto;
+import ru.practicum.shareit.request.dto.RequestInDto;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -19,48 +21,37 @@ import java.util.Set;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @JsonTest
-class UserDtoTest {
+class RequestInDtoTest {
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = factory.getValidator();
     @Autowired
-    private JacksonTester<UserDto> json;
+    private JacksonTester<RequestInDto> json;
 
     @Test
     void testSerialize() throws Exception {
-        var dto = new UserDto(
-                1L,
-                "User name",
-                "email@mail.com"
+        var dto = new RequestInDto(
+                "Request 1 description"
         );
 
         var result = json.write(dto);
 
-        assertThat(result).hasJsonPath("$.id");
-        assertThat(result).hasJsonPath("$.name");
-        assertThat(result).hasJsonPath("$.email");
-
-        assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(dto.getId().intValue());
-        assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo(dto.getName());
-        assertThat(result).extractingJsonPathStringValue("$.email").isEqualTo(dto.getEmail());
+        assertThat(result).hasJsonPath("$.description");
+        assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo(dto.getDescription());
     }
 
-    @DisplayName("Email validation")
+    @DisplayName("Check Blank")
     @ParameterizedTest
     @CsvSource({
-            "email, 1, Email.message",
-            "@email, 1, Email.message",
-            "email@, 1, Email.message",
-            "email@@dd, 1, Email.message",
-            "'ema il@dd', 1, Email.message",
-            "'name@email.com', 0, OK"
+            "null, 1, NotBlank.message",
+            "'', 1, NotBlank.message",
+            "text, 0, OK",
     })
-    void emailValidation(String email, int expectSize, String expectedMessage) {
-        if ("null".equals(email)) {
-            email = null;
+    void textNotBlank(String text, int expectSize, String expectedMessage) {
+        if ("null".equals(text)) {
+            text = null;
         }
-        var dto = new UserDto();
-        dto.setEmail(email);
-        Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
+        var dto = new CommentInDto(text);
+        Set<ConstraintViolation<CommentInDto>> violations = validator.validate(dto);
         Assertions.assertEquals(expectSize, violations.size());
 
         if (!violations.isEmpty()) {

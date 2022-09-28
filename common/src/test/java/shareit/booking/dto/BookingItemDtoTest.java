@@ -1,10 +1,11 @@
-package ru.practicum.shareit.booking.dto;
+package shareit.booking.dto;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import ru.practicum.shareit.Constants;
+import ru.practicum.shareit.booking.dto.BookingItemDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

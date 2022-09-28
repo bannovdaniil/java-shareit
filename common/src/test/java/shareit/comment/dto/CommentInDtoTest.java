@@ -1,6 +1,5 @@
-package ru.practicum.shareit.request.dto;
+package shareit.comment.dto;
 
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,22 +19,22 @@ import java.util.Set;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @JsonTest
-class RequestInDtoTest {
+class CommentInDtoTest {
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = factory.getValidator();
     @Autowired
-    private JacksonTester<RequestInDto> json;
+    private JacksonTester<CommentInDto> json;
 
     @Test
     void testSerialize() throws Exception {
-        var dto = new RequestInDto(
-                "Request 1 description"
+        var dto = new CommentInDto(
+                "Comment 1"
         );
 
         var result = json.write(dto);
 
-        assertThat(result).hasJsonPath("$.description");
-        assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo(dto.getDescription());
+        assertThat(result).hasJsonPath("$.text");
+        assertThat(result).extractingJsonPathStringValue("$.text").isEqualTo(dto.getText());
     }
 
     @DisplayName("Check Blank")
@@ -54,7 +53,7 @@ class RequestInDtoTest {
         Assertions.assertEquals(expectSize, violations.size());
 
         if (!violations.isEmpty()) {
-            AssertionsForClassTypes.assertThat(violations.iterator().next().getMessageTemplate())
+            assertThat(violations.iterator().next().getMessageTemplate())
                     .contains(expectedMessage);
         }
     }

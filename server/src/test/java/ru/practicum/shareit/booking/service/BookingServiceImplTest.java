@@ -8,8 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 import org.mockito.MockitoSession;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.Constants;
 import ru.practicum.shareit.booking.dto.BookingInDto;
 import ru.practicum.shareit.booking.exception.BookingErrorException;
@@ -45,7 +43,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 class BookingServiceImplTest {
-    private final Pageable pageable = PageRequest.of(0, Constants.PAGE_SIZE_NUM);
     private BookingService bookingService;
     private BookingRepository bookingRepository;
     private UserRepository userRepository;
@@ -365,10 +362,10 @@ class BookingServiceImplTest {
 
     @Test
     void findAllBookingByUserIdAndItemId() {
-        Mockito.when(bookingRepository.findAllByItemUserIdAndItemIdOrderByStartDesc(any(), anyLong(), anyLong(), any()))
+        Mockito.when(bookingRepository.findAllByItemUserIdAndItemIdOrderByStartDesc(anyLong(), anyLong(), any()))
                 .thenReturn(List.of(booking, bookingApproved));
 
-        var result = bookingService.findAllBookingByUserIdAndItemId(pageable, 1L, 2L, LocalDateTime.now());
+        var result = bookingService.findAllBookingByUserIdAndItemId(1L, 2L, LocalDateTime.now());
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(2, result.size());

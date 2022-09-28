@@ -46,7 +46,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             " AND b.status = ru.practicum.shareit.booking.model.BookingStatus.APPROVED " +
             " AND b.end < :dateTime "
     )
-    List<Booking> findAllByItemUserIdAndItemIdOrderByStartDesc(Pageable pageable, Long userId, Long itemId, LocalDateTime dateTime);
+    List<Booking> findAllByItemUserIdAndItemIdOrderByStartDesc(Long userId, Long itemId, LocalDateTime dateTime);
 
     @Query("SELECT b FROM Booking as b " +
             " JOIN Item as i ON b.itemId = i.id" +

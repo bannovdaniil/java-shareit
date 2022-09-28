@@ -230,7 +230,7 @@ class ItemServiceImplTest {
         );
         Mockito.when(userRepository.findById(anyLong())).thenReturn(Optional.of(user1));
         Mockito.when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
-        Mockito.when(bookingRepository.findAllByItemUserIdAndItemIdOrderByStartDesc(any(), anyLong(), anyLong(), any()))
+        Mockito.when(bookingRepository.findAllByItemUserIdAndItemIdOrderByStartDesc(anyLong(), anyLong(), any()))
                 .thenReturn(List.of(booking, bookingApproved));
         Mockito.when(commentRepository.save(any())).thenReturn(expect);
 
